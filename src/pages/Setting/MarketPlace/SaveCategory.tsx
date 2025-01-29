@@ -115,14 +115,12 @@ const SaveCategory: React.FC = () => {
     setDialogOpen(true);
   };
 
-  // Handle save button click
   const handleSave = (itemId: number) => {
     dispatch(saveItem(itemId)).catch((error) => {
       console.error('Error dispatching saveItem action:', error);
     });
   };
 
-  // Handle share button click
   const handleShareClick = (event: React.MouseEvent<HTMLElement>, item: { item: SavedItem; createdBy: CreatedBy }) => {
     setPopoverAnchor(event.currentTarget);
     setSelectedItem(item);

@@ -13,10 +13,10 @@ export default defineConfig({
   optimizeDeps: {
     include: ['fabric']
   },
+ 
   server: {
     host: '0.0.0.0',
     port: 5173,
     cors: true,
   }
-  
 })

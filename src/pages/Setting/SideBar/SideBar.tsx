@@ -212,7 +212,7 @@ const SideBar: React.FC<SidebarProps> = ({ onSelect }) => {
             }}
           >
             <List>
-              {['Posted Item', 'Market Place', 'Account Setting'].map((text) => (
+              {['Market Place', 'Account Setting'].map((text) => (
                 <ListItem
                   button
                   key={text}

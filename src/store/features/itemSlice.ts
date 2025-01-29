@@ -1,6 +1,6 @@
 
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, isRejectedWithValue } from '@reduxjs/toolkit';
 import apiConfig from '../../Authentication/api';
 
 interface BlobResponseDTO {
@@ -46,6 +46,7 @@ interface Item {
   created_by:string;
   firstName:string;
   status:string;
+  imageBlob:string;
 }
 
 interface ItemState {
@@ -145,6 +146,31 @@ export const viewItem = createAsyncThunk(
   }
 );
 
+export const viewItemAdmin = createAsyncThunk(
+  'items/viewItemAdmin',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiConfig.get(`/item`);
+      return response.data; 
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch items');
+    }
+  }
+);
+
+
+export const updateItemOrder = createAsyncThunk(
+  'items/updateItemOrder',
+  async (updates: { itemId: number; status: string }[], { rejectWithValue }) => {
+    try {
+      const response = await apiConfig.put(`/item`, updates); 
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to update item order');
+    }
+  }
+);
+
 
 const itemSlice = createSlice({
   name: 'items',
@@ -205,16 +231,26 @@ const itemSlice = createSlice({
         const fetchedItem: Item = action.payload;
         const existingItemIndex = state.items.findIndex(item => item.id === fetchedItem.id);
         if (existingItemIndex >= 0) {
-          // If the item exists, update it
           state.items[existingItemIndex] = fetchedItem;
         } else {
-          // Otherwise, add it to the items array
           state.items.push(fetchedItem);
         }
         state.loading = false;
       })
       .addCase(viewItem.rejected, (state, action) => {
         state.error = action.payload as string || 'Failed to fetch item';
+        state.loading = false;
+      })
+
+      .addCase(viewItemAdmin.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(viewItemAdmin.fulfilled, (state, action) => {
+        state.items = action.payload; // Assuming action.payload is an array of items
+        state.loading = false;
+      })
+      .addCase(viewItemAdmin.rejected, (state, action) => {
+        state.error = action.payload as string || 'Failed to fetch items';
         state.loading = false;
       });
   },

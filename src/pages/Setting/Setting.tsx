@@ -136,13 +136,11 @@ const Setting: React.FC = () => {
             Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
           },
         });
-
-        // Log the full API response to the console
         console.log("API Response:", response.data);
 
         const { name, image_url } = response.data;
-        setUserDesignation(name || 'No Designation'); // Set designation
-        setDesignationImage(image_url || ''); // Set image URL
+        setUserDesignation(name || 'No Designation'); 
+        setDesignationImage(image_url || ''); 
 
         // Log what is being set
         console.log("Designation:", name);
@@ -158,28 +156,14 @@ const Setting: React.FC = () => {
 
   const renderContent = () => {
     switch (selectedContent) {
-      // case 'Post Item':
-      //   return <PostItem />;
       case 'Bookings':
         return <MarketPlace />;
       case 'Account Setting':
         return <AccountSetting />;
       default:
-        return <PostItem />;
+        return <MarketPlace />;
     }
   };
-
-  // const signOut = () => {
-  //   // Clear session tokens
-  //   localStorage.removeItem('accessToken');
-  //   sessionStorage.removeItem('authToken');
-  //   sessionStorage.removeItem('userFirstName');
-  //   sessionStorage.removeItem('userLastName');
-  //   sessionStorage.removeItem('role'); 
-
-  //   // Navigate to sign-in page
-  //   navigate('/');
-  // };
 
   const signOut = () => {
     // Clear all data in sessionStorage

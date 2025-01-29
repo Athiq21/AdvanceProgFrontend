@@ -29,6 +29,7 @@ import commentReducer from './features/CommentSlice';
 import adminReducer from './features/adminSlice';
 import profileReducer from './features/profileSlice';
 import designationReducer from './features/designation';
+import orderReducer from './features/orderSlice'
 // import authReducer from './features/authSlice'
 
 export const index = configureStore({
@@ -37,6 +38,7 @@ export const index = configureStore({
     stories: storyReducer,
     theme: themeReducer,
     users: userReducer,
+    order: orderReducer,
     // auth:authReducer,
     // posts: postsReducer,
     // roles: rolesReducer,

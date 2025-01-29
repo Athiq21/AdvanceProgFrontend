@@ -1,7 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useState } from "react";
 import TabComponent from "../../../common/Component/Tabs/TabComponent";
-import PostCategory from "./PostCategory";
+import PostItem from "./PostCategory";
 import SaveCategory from "./SaveCategory";
 import CompletedCategory from "./CompletedCategory";
 
@@ -16,7 +16,7 @@ const MarketPlace = () => {
     const tabs = [
       {
         label: 'InProgress',
-        content: <PostCategory/>,
+        content: <PostItem/>,
       },
       {
         label: 'Completed',

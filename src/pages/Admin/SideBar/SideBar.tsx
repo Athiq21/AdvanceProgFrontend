@@ -161,7 +161,7 @@ const SideBar: React.FC<SidebarProps> = ({ onSelect }) => {
           }}
         />
         <List>
-          {['Event', 'Post Setting', 'Category Setting', 'Account Setting', 'Add Role', 'Group'].map((text) => (
+          {['Event', 'Post Setting', 'Category Setting', 'Account Setting', 'Add Role', 'Availability'].map((text) => (
             <ListItem button key={text} onClick={() => onSelect(text)}>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { fontSize: '14px' } }} />
             </ListItem>

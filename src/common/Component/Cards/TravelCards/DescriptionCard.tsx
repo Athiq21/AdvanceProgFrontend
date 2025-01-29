@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dialog, DialogContent, Box, Typography, Avatar, Button, CardMedia, TextField, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import AddButton from '../../Button/Add/AddButtons';
+import { AppDispatch, RootState} from '../../../../store/index';
+import { createOrder } from '../../../../store/features/orderSlice';
+
 
 interface DescriptionCardProps {
   open: boolean;
@@ -25,7 +29,6 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
   onClose,
   image,
   userProfilePic,
-  userId,
   firstName,
   title,
   description,
@@ -35,17 +38,19 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
   transmission,
   color,
   status,
-  itemId
+  itemId,
 }) => {
   const [formData, setFormData] = useState({
-    address: '',
-    nic: '',
-    phoneNumber: '',
-    paymentMethod: 'payOnArrival',
+    startDate: '',
+    endDate: '',
+    paymentMethod: '',
   });
-
-  const [isBookingFormVisible, setIsBookingFormVisible] = useState(false); // New state to toggle form visibility
+  const [isBookingFormVisible, setIsBookingFormVisible] = useState(false);
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
+ 
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, success, error } = useSelector((state: RootState) => state.order);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,29 +60,60 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
     });
   };
 
-  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      paymentMethod: e.target.value,
-    });
-  };
-
-  const handleBookingSubmit = () => {
-    console.log('Booking details:', formData);
-    setIsBookingConfirmed(true); // Show confirmation message or close modal
-  };
-
   const handleBookButtonClick = () => {
-    setIsBookingFormVisible(true); // Show the booking form when "Book" button is clicked
+    setIsBookingFormVisible(true);
   };
 
+  const [userId, setUserId] = useState<number | null>(null);  // Declare state for userId
+
+  useEffect(() => {
+    const storedUserId = sessionStorage.getItem('userId');  // Get userId from sessionStorage
+    if (storedUserId) {
+      setUserId(parseInt(storedUserId));  // Set userId if available
+    }
+  }, []);
+
+  const handleBookingSubmit = async () => {
+    console.log('User ID:', userId);
+    console.log('Start Date:', formData.startDate); 
+    console.log('End Date:', formData.endDate);
+    
+    if (!formData.startDate || !formData.endDate || !userId) {
+      console.error('Please provide valid start date, end date, and user information.');
+      return;
+    }
+  
+    const formattedStartDate = new Date(formData.startDate).toISOString().split('T')[0];
+    const formattedEndDate = new Date(formData.endDate).toISOString().split('T')[0];
+  
+    console.log('Formatted Start Date:', formattedStartDate); 
+    console.log('Formatted End Date:', formattedEndDate); 
+  
+    const orderData = {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      user: { id: userId },
+      item: { id: itemId },
+      paymentMethod: formData.paymentMethod,
+    };
+  
+    try {
+      await dispatch(createOrder(orderData)).unwrap();
+      console.log('Order Data:', orderData); 
+      setIsBookingConfirmed(true);  
+    } catch (err) {
+      console.error('Booking submission failed:', err); 
+    }
+  };
+  
+  
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{
       sx: {
         borderRadius: 2,
         width: '80%',
         height: '80%',
-      }
+      },
     }}>
       <DialogContent sx={{ p: 0 }}>
         <Box sx={{ display: 'flex', height: '100%' }}>
@@ -90,20 +126,36 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
             />
           </Box>
           <Box sx={{ width: '50%', pl: 2, display: 'flex', flexDirection: 'column' }}>
-            <Box display="flex" alignItems="center" mb={2} marginTop='10px'>
+            <Box display="flex" alignItems="center" mb={2} marginTop="10px">
               <Avatar src={userProfilePic} sx={{ mr: 1, width: 40, height: 40 }} />
-              <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>  {firstName} </Typography>
+              <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{firstName}</Typography>
             </Box>
-            <Typography><strong>Title:</strong>{title}</Typography>
-            <Typography><strong>Description:</strong> {description}</Typography>
-            <Typography><strong>Fuel Type:</strong>{fueltype}</Typography>
-            <Typography><strong>Transmission:</strong>{transmission}</Typography>
-            <Typography><strong>Color:</strong>{color}</Typography>
-            <Typography><strong>Mileage:</strong>{mileage}</Typography>
-            <Typography><strong>Price:</strong>{price}</Typography>
-            <Typography><strong>Status:</strong>{status}</Typography>
-
-            {/* Show "Book" Button only if status is "available" */}
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{title}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{description}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{fueltype}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{transmission}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{color}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{mileage}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography> {price}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            <Typography>{status}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginTop="10px">
+            </Box>
             {status === 'available' && !isBookingFormVisible && (
               <Box sx={{ mt: 3 }}>
                 <AddButton variant="contained" onClick={handleBookButtonClick}>
@@ -112,63 +164,61 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
               </Box>
             )}
 
-            {/* Booking Form */}
             {isBookingFormVisible && !isBookingConfirmed && (
-              <Box sx={{ mt: 3 }}>
+              <Box>
                 <TextField
-                  label="Address"
-                  fullWidth
-                  margin="normal"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  label="NIC"
-                  fullWidth
-                  margin="normal"
-                  name="nic"
-                  value={formData.nic}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  label="Phone Number"
-                  fullWidth
-                  margin="normal"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                />
+  label="Start Date"
+  name="startDate"
+  type="date"
+  fullWidth
+  margin="normal"
+  value={formData.startDate}
+  onChange={handleInputChange}
+  InputLabelProps={{ shrink: true }}
+  InputProps={{
+    inputProps: { min: new Date().toISOString().split('T')[0] },  // Prevent past dates
+  }}
+/>
 
-                {/* Payment Method */}
-                <FormControl component="fieldset" sx={{ mt: 2 }}>
-                  <FormLabel component="legend">Payment Method</FormLabel>
+<TextField
+  label="End Date"
+  name="endDate"
+  type="date"
+  fullWidth
+  margin="normal"
+  value={formData.endDate}
+  onChange={handleInputChange}
+  InputLabelProps={{ shrink: true }}
+  InputProps={{
+    inputProps: { min: formData.startDate || new Date().toISOString().split('T')[0] },  // Min date set to startDate
+  }}
+/>
+
+                <FormControl>
+                  <FormLabel>Payment Method</FormLabel>
                   <RadioGroup
                     name="paymentMethod"
                     value={formData.paymentMethod}
-                    onChange={handlePaymentChange}
+                    onChange={handleInputChange}
                   >
                     <FormControlLabel value="payOnArrival" control={<Radio />} label="Pay on Arrival" />
                     <FormControlLabel value="online" control={<Radio />} label="Pay Online" />
                   </RadioGroup>
                 </FormControl>
-
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    onClick={handleBookingSubmit}
-                  >
-                    Confirm Booking
-                  </Button>
-                </Box>
+                <Button
+                  variant="contained"
+                  onClick={handleBookingSubmit}
+                  disabled={loading}
+                  sx={{ mt: 2 }}
+                >
+                  {loading ? 'Submitting...' : 'Confirm Booking'}
+                </Button>
+                {error && <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>}
               </Box>
             )}
 
-            {/* Booking Confirmation */}
-            {isBookingConfirmed && (
-              <AddButton sx={{ mt: 2 }}>
-                <Typography>Thank you for booking with us! Your ride is confirmed.</Typography>
-              </AddButton>
+            {isBookingConfirmed && success && (
+              <Typography sx={{ mt: 3 }}>Thank you for booking! Your order is confirmed.</Typography>
             )}
           </Box>
         </Box>
@@ -178,3 +228,5 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
 };
 
 export default DescriptionCard;
+
+
