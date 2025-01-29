@@ -11,12 +11,8 @@ import apiConfig from '../../../Authentication/api';
 import { useNavigate } from 'react-router-dom';
 
 const EditCategory: React.FC = () => {
-  const { items, loading, error } = useItems();
+  const { items } = useItems();
   const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const [deletingItemtId, setDeletingItemId] = useState<number | null>(null);
-
-  // Delete Confirm Button
   const [openDialog, setOpenDialog] = useState(false);
   const [currentDeleteId, setCurrentDeleteId] = useState<number | null>(null);
   const navigate = useNavigate();
@@ -25,12 +21,11 @@ const EditCategory: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
-// Handle Delete item by Admin
 const handleDelete = async (id: number) => {
   try {
     await apiConfig.delete(`/item/${id}`);
     console.log(`Item with ID ${id} deleted successfully.`);
-    navigate(0); // Reload the same page
+    navigate(0);
   } catch (error) {
     console.error("Failed to delete item:", error);
   }

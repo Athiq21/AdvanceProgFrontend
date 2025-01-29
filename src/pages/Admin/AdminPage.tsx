@@ -20,9 +20,9 @@ const AdminPage: React.FC = () => {
 
   const renderContent = () => {
     switch (selectedContent) {
-      case 'Event':
+      case 'Event Setting':
         return <Event />;
-      case 'Post Setting':
+      case 'Listing Setting':
         return <PostSetting />;
       case 'Category Setting':
         return <CategorySetting />;

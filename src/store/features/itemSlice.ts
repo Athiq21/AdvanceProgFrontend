@@ -72,7 +72,7 @@ export const fetchItems = createAsyncThunk(
 export const deleteItem = createAsyncThunk(
   'items/deleteItem',
   async (itemId: number) => {
-    await apiConfig.delete(`/items/${itemId}`);
+    await apiConfig.delete(`/item/${itemId}`);
     return itemId;
   }
 );

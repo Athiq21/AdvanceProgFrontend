@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TabComponent from "../../../common/Component/Tabs/TabComponent";
-import { Box, Button, Typography } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
-import Buttons from "../../../common/Component/Button/Buttons";
+import { Box } from "@mui/material";
+// import { PhotoCamera } from "@mui/icons-material";
+// import Buttons from "../../../common/Component/Button/Buttons";
 import EditCategory from "./EditCategory";
-import EditPost from "./EditPost";
-import { Post } from "../../../type/Posts";
-import usePosts from "../../../Service/CustomHook/getPost";
+// import EditPost from "./EditPost";
+// import { Post } from "../../../type/Posts";
+// import usePosts from "../../../Service/CustomHook/getPost";
 
 
 
 const PostSetting = ()=>{
-  const [posts, setPosts] = useState<Post[]>([]); 
+  // const [posts, setPosts] = useState<Post[]>([]); 
 
 const [value, setValue] = useState(0);
 
@@ -21,7 +21,7 @@ const [value, setValue] = useState(0);
 
   const tabs = [
     {
-      label: 'Category Setting',
+      label: 'Listing Setting',
       content:<EditCategory/>,
     },
   ];

@@ -5,12 +5,17 @@ import SideBar from './SideBar/SideBar';
 import { ItemResponseDTO } from '../../DTO/ItemResponseDTO';
 import MainCard from '../../common/Component/Cards/TravelCards/MainCard';
 import MarketPlaceTextComponent from '../../common/Component/AddTextComponent/MarketPlaceTextComponent';
-import MenuBar from './MenuBar/MenuBar';
 
 const Marketplace: React.FC = () => {
     const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null);
     const [itemcat, setItems] = useState<ItemResponseDTO[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [role,setRole] = useState <string | null>(null);
+
+    useEffect(() => {
+        const userRole = sessionStorage.getItem('roleName');
+        setRole(userRole);
+    }, []);
 
     const filteredItems = itemcat.filter(
         (item) =>
@@ -63,23 +68,15 @@ const Marketplace: React.FC = () => {
                         width: '100%', 
                     }}
                 >
-                     {/* <MenuBar
-                    onSearch={(query: string) => setSearchQuery(query)}
-                    onAllClick={handleAllClick}
-                /> */}
     <SideBar
   onSubcategorySelect={(subcategoryId) => setSelectedSubcategoryId(subcategoryId)}
   onSearch={(query) => setSearchQuery(query)} 
 />
-    {/* <SideBar onSubcategorySelect={(subcategoryId) => setSelectedSubcategoryId(subcategoryId)} /> */}
                 </Box>
         
             </Grid>
 
-
-                {/* Marketplace Items */}
                 <Grid item xs={12} sm={9}>
-                    {/* Store Title */}
                     <Box align="center" sx={{ mt: { xs: '-20px', sm: '-55px' }, mb: '-20px' }}>
                         <Typography
                             variant="h3"
@@ -94,9 +91,11 @@ const Marketplace: React.FC = () => {
                         </Typography>
                     </Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: '30px', px: { xs: 2, sm: 0 } }}>
-                        <MarketPlaceTextComponent />
-                    </Box>
+                    {role === 'ROLE_ADMIN' && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '30px', px: { xs: 2, sm: 0 } }}>
+                            <MarketPlaceTextComponent />
+                        </Box>
+                    )}
 
                     <Grid 
                         container 

@@ -14,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const isAuthenticated = !!localStorage.getItem('accessToken')
 
   if (!isAuthenticated) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/home/markets" replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;
