@@ -124,7 +124,7 @@ const SideBar: React.FC<SidebarProps> = ({ onSelect }) => {
             top: '15%',
             left: '10px',
             transform: 'translateY(-50%)',
-            zIndex: 1201, // Ensure it is above other elements
+            zIndex: 1201,
             backgroundColor: '#656565',
             color: 'white',
             '&:hover': {
@@ -161,7 +161,7 @@ const SideBar: React.FC<SidebarProps> = ({ onSelect }) => {
           }}
         />
         <List>
-          {['Event', 'Post Setting', 'Category Setting', 'Account Setting', 'Add Role', 'Availability'].map((text) => (
+          {['Event Setting', 'Listing Setting', 'Category Setting', 'Account Setting', 'Add Role', 'Availability'].map((text) => (
             <ListItem button key={text} onClick={() => onSelect(text)}>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { fontSize: '14px' } }} />
             </ListItem>

@@ -22,7 +22,7 @@ import { fetchSubCategoriesByCategoryId } from '../../../store/features/subCateg
 
 interface SidebarProps {
   onSubcategorySelect: (subcategoryId: number) => void;
-  onSearch: (query: string) => void; // For updating search in Marketplace
+  onSearch: (query: string) => void; 
 }
 
 const SideBar: React.FC<SidebarProps> = ({ onSubcategorySelect, onSearch }) => {
