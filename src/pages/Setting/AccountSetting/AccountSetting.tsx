@@ -7,7 +7,6 @@ import * as yup from 'yup';
 import ProfileAvatar from '../Avatar/ProfileAvatar';
 import apiConfig from '../../../Authentication/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDesignations } from '../../../store/features/designation';
 import { RootState } from '../../../store';
 import { deactivateUser } from '../../../store/features/userSlice';
 import { useNavigate } from 'react-router-dom';
@@ -42,10 +41,6 @@ const AccountSetting = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Fetch designations from Redux store
-  const designations = useSelector((state: RootState) => state.designations.designations);
-  const status = useSelector((state: RootState) => state.designations.status);
-  const error = useSelector((state: RootState) => state.designations.error);
 
   const { control: primaryControl, handleSubmit: handlePrimarySubmit, formState: { errors: primaryErrors }, setValue, getValues } = useForm({
     resolver: yupResolver(primarySettingsSchema),
@@ -65,15 +60,12 @@ const AccountSetting = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchDesignations());
     
     const firstName = sessionStorage.getItem('userFirstName') || '';
     const lastName = sessionStorage.getItem('userLastName') || '';
-    const designationId = sessionStorage.getItem('userDesignationId') || '';
 
     setValue('firstName', firstName);
     setValue('lastName', lastName);
-    setValue('designation', designationId);
   }, [dispatch, setValue]);
 
   const onSubmitPrimarySettings = async (data: any) => {
@@ -87,6 +79,7 @@ const AccountSetting = () => {
           designation
         },
       });
+      console.log(response.data);
 
       setSnackbarMessage('Profile updated successfully!');
       setSnackbarSeverity('success');
@@ -189,16 +182,17 @@ const AccountSetting = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
-        marginLeft:'10px',
-  marginBottom:'90px',
+        width: '100%',
+
       }}
     >
       <Box sx={{
+      
         border: '2px solid', 
         borderColor: '#9C9C9C',
         borderRadius: 2, 
         p: 3,
-        width: '300px'
+        width: '600px'
       }}>
         <Box display={'flex'} alignItems="center" sx={{ position: 'relative' }}>
         <ProfileAvatar profilePic={profilePic} onImageChange={setProfilePic} />
@@ -237,34 +231,8 @@ const AccountSetting = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={6}>
-              <Controller
-                name="designation"
-                control={primaryControl}
-                render={({ field }) => (
-                  <TextField
-                    fullWidth
-                    select
-                    label="Department"
-                    {...field}
-                    error={!!primaryErrors.designation}
-                    helperText={primaryErrors.designation?.message}
-                  >
-                    {status === 'loading' ? (
-                      <MenuItem value="">Loading...</MenuItem>
-                    ) : status === 'failed' ? (
-                      <MenuItem value="">Error loading designations</MenuItem>
-                    ) : (
-                      designations.map(designation => (
-                        <MenuItem key={designation.id} value={designation.id}>
-                          {designation.name}
-                        </MenuItem>
-                      ))
-                    )}
-                  </TextField>
-                )}
-              />
-            </Grid>
+
+             
           </Grid>
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button

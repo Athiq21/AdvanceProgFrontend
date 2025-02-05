@@ -26,8 +26,8 @@ const AccountSetting = () => {
     const fetchUsers = async () => {
       try {
         setStatus('loading');
-        const activeResponse = await apiConfig.get('/roles/users/active');
-        const deactivatedResponse = await apiConfig.get('/roles/users/deactivated');
+        const activeResponse = await apiConfig.post('/roles/users/active');
+        const deactivatedResponse = await apiConfig.post('/roles/users/deactivated');
         
         setActiveUsers(activeResponse.data);
         setDeactivatedUsers(deactivatedResponse.data);
@@ -49,7 +49,7 @@ const AccountSetting = () => {
   const handleDeactivate = async (email: string) => {
     try {
       setStatus('loading');
-      await apiConfig.put(`/roles/users/deactivate/${email}`);
+      await apiConfig.post(`/roles/users/deactivate?email=${email}`);
       setActiveUsers(activeUsers.filter(user => user.email !== email));
       setDeactivatedUsers([...deactivatedUsers, { ...activeUsers.find(user => user.email === email), isActivated: false }]);
       setStatus('succeeded');
@@ -63,7 +63,7 @@ const AccountSetting = () => {
   const handleReactivate = async (email: string) => {
     try {
       setStatus('loading');
-      await apiConfig.put(`/roles/users/reactivate/${email}`);
+      await apiConfig.post(`/roles/users/reactivate?email=${email}`);
       setDeactivatedUsers(deactivatedUsers.filter(user => user.email !== email));
       setActiveUsers([...activeUsers, { ...deactivatedUsers.find(user => user.email === email), isActivated: true }]);
       setStatus('succeeded');
@@ -73,6 +73,7 @@ const AccountSetting = () => {
       setStatus('failed');
     }
   };
+  
 
   const filterUsers = (users: User[]) =>
     users.filter(user =>
@@ -98,7 +99,7 @@ const AccountSetting = () => {
         <SearchComponent value={searchQuery} onChange={handleSearch} />
       </Box>
 
-      {/* <Box marginLeft={'-8px'}>
+      <Box marginLeft={'-8px'}>
         {status === 'loading' && <p>Loading...</p>}
         {status === 'failed' && <p>Error: {error}</p>}
 
@@ -112,7 +113,7 @@ const AccountSetting = () => {
                 profilePic={user.imageUrl}
                 name={`${user.firstName} ${user.lastName}`}
                 email={user.email}
-                showDeleteIcon={true} // Show delete icon for active users
+                showDeleteIcon={true} 
                 onDelete={() => handleDeactivate(user.email)} // Pass the deactivation handler
               />
             </Box>
@@ -135,8 +136,8 @@ const AccountSetting = () => {
             </Box>
           ))
         )}
-      </Box> */}
-
+      </Box>
+{/* 
 <Box sx={{ width: '100%', padding: { xs: 2, sm: 3, md: 4 } }}>
   {status === 'loading' && <Typography variant="body1">Loading...</Typography>}
   {status === 'failed' && <Typography variant="body1" color="error">Error: {error}</Typography>}
@@ -178,7 +179,7 @@ const AccountSetting = () => {
       ))}
     </Grid>
   )}
-</Box>
+</Box> */}
     </Box>
   );
 };

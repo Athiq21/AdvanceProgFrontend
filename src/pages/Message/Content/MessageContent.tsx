@@ -1,11 +1,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Avatar, TextField, Paper, Button } from '@mui/material';
-import { User, ChatMessage, Post } from '../../../store/types';
+import { User, ChatMessage } from '../../../store/types';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import ItemCard from './ItemCard';
-import PostView from './PostView';
 import AddButtons from '../../../common/Component/Button/Add/AddButtons';
 
 const linkify = (text: string) => {
@@ -175,12 +174,7 @@ const MessageList: React.FC<MessageListProps> = ({ user, messages, onSendMessage
                             variant="body1"
                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(messageWithLinks) }}
                           />
-                          {message.postId && postDetails.get(message.postId) && (
-                            <Box sx={{ mt: 1 }}>
-                              <Typography variant="subtitle1">Post Title:</Typography>
-                              <PostView postId={message.postId} />
-                            </Box>
-                          )}
+                         
                           {message.itemId && itemDetails.get(message.itemId) && (
                             <Box sx={{ mt: 1 }}>
                               <Typography variant="subtitle1">Shared Item:</Typography>

@@ -15,7 +15,6 @@ import OTPPage from './pages/Auth/OTPPage'
 import SignIn from './pages/Auth/SignIn'
 import SignUp from './pages/Auth/SignUp'
 import ActivateAccount from './pages/Auth/ActiveAccount'
-import SearchPage from './pages/SearchPage/SearchPage'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider'
 import ForgotPassword from './pages/Auth/ForgotPw'
 import ResetPassword from './pages/Auth/ResetPassword'
@@ -82,7 +81,7 @@ const router = createBrowserRouter([
         path: '/home/search',
         element: (
           <ProtectedRoute>
-            <SearchPage/>
+            {/* <SearchPage/> */}
           </ProtectedRoute>
         ),
       },

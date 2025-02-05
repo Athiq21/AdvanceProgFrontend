@@ -4,7 +4,6 @@ import { saveItem, fetchSavedItems } from '../../../../store/features/savedSlice
 import { Card, CardMedia, IconButton, Box, Avatar, Menu, MenuItem, CardHeader, Popover, List, ListItem, ListItemAvatar, ListItemText, TextField, Button, Typography, CircularProgress } from '@mui/material';
 import { BookmarkBorder as BookmarkBorderIcon, Bookmark as BookmarkIcon, Send, MoreVert, Visibility, Edit, Delete } from '@mui/icons-material';
 import DescriptionCard from './DescriptionCard';
-import ViewCard from '../View/ViewCard';
 import EditCategoryCard from './EditCategoryCard';
 import AddButtons from '../../Button/Add/AddButtons';
 import { BASE_URL } from '../../../../Authentication/api';
@@ -151,12 +150,6 @@ const MainCard: React.FC<MainCardProps> = ({
             </IconButton>
           </Box>
         </Box>
-        <ViewCard
-          open={profilePopupOpen}
-          onClose={handleProfilePopupClose}
-          profilePic={imageUrl}
-          username={userName}
-        />
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

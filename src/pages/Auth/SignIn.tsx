@@ -32,9 +32,7 @@ const SignIn: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // On page load, synchronize sessionStorage with localStorage
     if (!sessionStorage.getItem('accessToken')) {
-      // If sessionStorage doesn't have the data, try to load it from localStorage
       const accessToken = localStorage.getItem('accessToken');
       const userId = localStorage.getItem('userId');
       const role = localStorage.getItem('role');
@@ -44,7 +42,6 @@ const SignIn: React.FC = () => {
       const designation = localStorage.getItem('designation');
 
       if (accessToken) {
-        // Store all the values in sessionStorage to keep the session alive
         sessionStorage.setItem('accessToken', accessToken);
         sessionStorage.setItem('userId', userId || '');
         sessionStorage.setItem('role', role || '');
@@ -57,7 +54,7 @@ const SignIn: React.FC = () => {
 
     const isAuthenticated = !!sessionStorage.getItem('accessToken');
     if (isAuthenticated) {
-      navigate('/home/markets'); // Redirect to home if already authenticated
+      navigate('/home/markets'); 
     }
   }, [navigate]);
 
@@ -85,55 +82,71 @@ const SignIn: React.FC = () => {
     }
   };
 
+ 
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+    
+    // Run validation checks
     handleBlur('email');
     handleBlur('password');
-  
+    
     if (emailError || passwordError || !validateEmail(email) || !validatePassword(password)) {
       setErrorMessage('Password or Email isn\'t correct.');
       return;
     }
-  
+    
     try {
-      const response = await apiConfig.post<{ accessToken: string, user: UserMinDTO, role:[] }>('/auth/signin', { email, password });
-  
-      const { accessToken, user, role } = response.data;
+      // Attempt to sign in the user
+      const response = await apiConfig.post<{ accessToken: string, user: UserMinDTO, role: [] }>('/auth/signin', { email, password });
+      
+      // Destructure response to get the needed data
+      const { accessToken, user, message } = response.data;
       console.log(response.data);
-  
+      
+      // Check if the response contains the "Account not activated" message
+      if (message === "Account not activated. Please verify your email with the OTP.") {
+        console.log("Account not activated. Redirecting to activation page.");
+        setErrorMessage('Your account is not activated. Please check your email for the OTP.');
+        navigate('/active', { state: { email } });
+        return;
+      }
+      
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem("userId", user.id.toString());
       localStorage.setItem("email", user.email);
       localStorage.setItem('userFirstName', user.firstName);
       localStorage.setItem('userLastName', user.lastName);
       localStorage.setItem('role_id', user.roleId.toString());
-    localStorage.setItem('roleName', user.roleName);
-  
+      localStorage.setItem('roleName', user.roleName);
+    
       sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem("userId", user.id.toString());
       sessionStorage.setItem("email", user.email);
       sessionStorage.setItem('userFirstName', user.firstName);
       sessionStorage.setItem('userLastName', user.lastName);
       sessionStorage.setItem('role_id', user.roleId.toString());
-    sessionStorage.setItem('roleName', user.roleName);
-
+      sessionStorage.setItem('roleName', user.roleName);
+      
       if (response.status === 200) {
         navigate('/home/markets');
       }
     } catch (error: any) {
       if (error.response) {
-        // Log the error response to inspect the error data
-        console.log(error.response);
+        console.log('Error Response:', error.response);
+        console.log('Error Status:', error.response.status);
+        console.log('Error Data:', error.response.data);
+        console.log('Error Message:', error.response.data.message);
   
-        if (error.response.data.error === "Account not activated. Please verify your email with the OTP.") {
+        // If the account is not activated
+        if (error.response.data.message === "Account not activated. Please verify your email with the OTP.") {
+          console.log("Account not activated. Redirecting to activation page.");
           setErrorMessage('Your account is not activated. Please check your email for the OTP.');
-          setTimeout(() => navigate('/active', { state: { email } }), 3000); // Redirect to activation page
+          navigate('/active', { state: { email } });
         } else {
           setErrorMessage('Invalid email or password.');
         }
       } else {
-   
         setErrorMessage('An unexpected error occurred. Please try again later.');
         console.error(error);
       }
