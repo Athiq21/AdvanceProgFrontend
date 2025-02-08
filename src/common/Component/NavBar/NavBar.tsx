@@ -22,12 +22,14 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import AdbIcon from '@mui/icons-material/Adb';
 import AvatarComponent from '../../../pages/Setting/Avatar';
 import taxi from '/asset/taxi.png';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 
 const iconMap: { [key: string]: JSX.Element } = {
   category: <StorefrontOutlinedIcon />,
   event: <EventAvailableOutlinedIcon />,
   admin: <SupervisorAccountIcon />,
   chat: <AdbIcon />,
+  finance: <AccountBalanceIcon />,
 };
 
 const NavBar: React.FC = () => {
@@ -50,6 +52,7 @@ const NavBar: React.FC = () => {
   const navData = [
     { label: 'Category', path: '/home/markets' },
     { label: 'Event', path: '/home/event' },
+    { label: 'Finance', path: '/home/finance' },
     ...(userRole === 'ROLE_ADMIN' ? [{ label: 'Admin', path: '/home/admin' }] : []),
   ];
 

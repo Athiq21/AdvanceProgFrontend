@@ -88,7 +88,7 @@ export const fetchOrders = createAsyncThunk<Order[], void, { rejectValue: string
   }
 );
 
-// Async thunk to cancel an order
+
 export const cancelOrder = createAsyncThunk<void, number, { rejectValue: string }>(
   'orders/cancelOrder',
   async (id: number, { rejectWithValue }) => {
@@ -108,6 +108,18 @@ export const fetchOrdersByUser = createAsyncThunk<Order[], number, { rejectValue
       return response.data;
     } catch (error: any) {
       return rejectWithValue('Failed to fetch orders for the user');
+    }
+  }
+);
+
+export const AllfetchOrders = createAsyncThunk<Order[], void, { rejectValue: string }>(
+  'orders/AllfetchOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiConfig.get<Order[]>('/order/all');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue('Failed to fetch all orders');
     }
   }
 );
@@ -193,6 +205,19 @@ const orderSlice = createSlice({
           state.orders = action.payload;
         })
         .addCase(fetchOrdersByUser.rejected, (state, action) => {
+          state.status = 'failed';
+          state.error = action.payload as string;
+        })
+        
+
+        .addCase(AllfetchOrders.pending, (state) => {
+          state.status = 'loading';
+        })
+        .addCase(AllfetchOrders.fulfilled, (state, action) => {
+          state.status = 'succeeded';
+          state.orders = action.payload;
+        })
+        .addCase(AllfetchOrders.rejected, (state, action) => {
           state.status = 'failed';
           state.error = action.payload as string;
         });

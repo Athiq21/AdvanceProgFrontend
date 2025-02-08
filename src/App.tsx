@@ -17,7 +17,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/L
 import ForgotPassword from './pages/Auth/ForgotPw'
 import ResetPassword from './pages/Auth/ResetPassword'
 import "./hero-section.css";
-
+import Finance from './pages/Finances/Finance'
+import Dashboard from './pages/Finances/content/dashboard'
+import Order from './pages/Finances/content/Order'
+import Finances from './pages/Finances/content/Finances'
+import Reports from './pages/Finances/content/reports'
+import Issue from './pages/Finances/content/Issue/Issue'
 const router = createBrowserRouter([
   {
     path: '/home',
@@ -47,6 +52,55 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: '/home/finance',
+        element: (
+          <ProtectedRoute>
+            <Finance />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/home/finance/dashboard',
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/home/finance/order',
+        element: (
+          <ProtectedRoute>
+            <Order />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/home/finance/finances',
+        element: (
+          <ProtectedRoute>
+            <Finances />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/home/finance/reports',
+        element: (
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/home/finance/issue',
+        element: (
+          <ProtectedRoute>
+            <Issue />
+          </ProtectedRoute>
+        ),
+      },
+
       {
         path: '/home/setting',
         element: (
@@ -110,28 +164,28 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <div className="hero-section">
+      {/* <div className="hero-section">
         <div className="gradient-bg"></div>
         <div className="radial-gradient-bg"></div>
         <div className="grid-overlay"></div>
         
-        {/* Add orbs */}
+ 
         <div className="orb orb-1"></div>
         <div className="orb orb-2"></div>
         <div className="orb orb-3"></div>
         
-        {/* Add light beams */}
+  
         <div className="light-beam beam-1"></div>
         <div className="light-beam beam-2"></div>
         <div className="light-beam beam-3"></div>
         <div className="light-beam beam-4"></div>
         
-        {/* Add ripples */}
+
         <div className="ripple ripple-1"></div>
         <div className="ripple ripple-2"></div>
         <div className="ripple ripple-3"></div>
         
-        {/* Existing particles */}
+
         <div className="particles">
           <div className="particle" style={{"--tx": "100px", "--ty": "-150px"} as React.CSSProperties}></div>
           <div className="particle" style={{"--tx": "-120px", "--ty": "-100px"} as React.CSSProperties}></div>
@@ -139,7 +193,7 @@ function App() {
           <div className="particle" style={{"--tx": "-100px", "--ty": "150px"} as React.CSSProperties}></div>
           <div className="particle" style={{"--tx": "120px", "--ty": "-100px"} as React.CSSProperties}></div>
         </div>
-      </div>
+      </div> */}
       
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <AuthProvider>
