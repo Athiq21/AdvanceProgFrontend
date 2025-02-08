@@ -186,7 +186,7 @@ const Setting: React.FC = () => {
   sx={{
     marginTop: {
       xs: '20px', 
-      md: '100px',
+      md: '50px',
     },
   }}
 >
@@ -194,7 +194,7 @@ const Setting: React.FC = () => {
 <Box display="flex" alignItems="flex-start" justifyContent="center" mb={5}>
 <Box  sx={{
     marginTop: {
-      xs: '-20px', 
+      xs: '20px', 
     },
     marginLeft:{
       xs: '-20px', 
@@ -207,7 +207,7 @@ const Setting: React.FC = () => {
   <SideBar onSelect={setSelectedContent} />
 </Box>
   <Box display="flex" alignItems="center">
-    <Box sx={{ marginTop: '40px' }}>
+    <Box sx={{ marginTop: '80px' }}>
       <AvatarComponent style={{ width: 100, height: 100, marginTop: -50 }} />
     </Box>
 

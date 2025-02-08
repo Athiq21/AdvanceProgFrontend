@@ -69,7 +69,7 @@ const NavBar: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: '#E6E6E6',
+          backgroundColor: '#ffffff',
           color: 'black',
           height: '60px',
           ...(isMobile && { bottom: 0, top: 'auto' }),

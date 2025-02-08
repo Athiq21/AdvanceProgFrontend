@@ -160,7 +160,7 @@ const SignIn: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      backgroundColor: '#f0f0f0'
+      // backgroundColor: '#f0f0f0'
     }}>
       <Container
         component="form"
@@ -194,7 +194,7 @@ const SignIn: React.FC = () => {
           </Typography>
         </Box>
 
-        <Typography variant="body3" sx={{ marginTop: '45px', fontSize: '40px', textAlign: 'center', color: '#263B4A' ,  background: 'linear-gradient(45deg, #4B0082, #E6E6FA)', 
+        <Typography variant="body3" sx={{ marginTop: '45px', fontSize: '40px', textAlign: 'center', color: '#263B4A' ,  background: 'linear-gradient(45deg,  #1b2857, #2648b6)', 
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} gutterBottom>
           Sign In
         </Typography>

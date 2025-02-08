@@ -47,7 +47,7 @@ const Marketplace: React.FC = () => {
     };
 
     return (
-        <Box sx={{ marginTop: { xs: '40px', sm: '130px' },
+        <Box sx={{ marginTop: { xs: '30px', sm: '50px' },
         marginBottom: { xs: '50px', sm: '90px' },
         }}>
             <Grid container spacing={2}>
@@ -77,12 +77,12 @@ const Marketplace: React.FC = () => {
             </Grid>
 
                 <Grid item xs={12} sm={9}>
-                    <Box align="center" sx={{ mt: { xs: '-20px', sm: '-55px' }, mb: '-20px' }}>
+                    <Box align="center" sx={{ mt: { xs: '-10px', sm: '5px' }, mb: '-20px' }}>
                         <Typography
                             variant="h3"
                             sx={{
                                 fontSize: { xs: '3rem', sm: '4rem' }, 
-                                background: 'linear-gradient(45deg, #4B0082, #E6E6FA)', 
+                                background: 'linear-gradient(45deg, #46627f, #E6E6FA)', 
                                 WebkitBackgroundClip: 'text', 
                                 WebkitTextFillColor: 'transparent',
                             }}

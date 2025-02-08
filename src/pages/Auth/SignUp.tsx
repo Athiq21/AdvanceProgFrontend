@@ -96,7 +96,7 @@ const SignUp: React.FC = () => {
  justifyContent: 'center',
  alignItems: 'center',
  minHeight: '100vh',
- backgroundColor: '#f0f0f0'
+//  backgroundColor: '#f0f0f0'
  }}>
  <Container component="form" onSubmit={handleSubmit(onSubmit)} 
  sx={{ 
@@ -109,7 +109,7 @@ const SignUp: React.FC = () => {
  flexDirection: 'column',
  padding: 3
  }}>
-  <Typography variant="body3" sx={{ marginTop: '10px', fontSize: '40px', textAlign: 'center', color: '#263B4A' ,  background: 'linear-gradient(45deg, #ff6601, #f9e294)', 
+  <Typography variant="body3" sx={{ marginTop: '10px', fontSize: '40px', textAlign: 'center', color: '#263B4A' ,  background: 'linear-gradient(45deg, #1b2857, #2648b6)', 
     WebkitBackgroundClip: 'text', 
     WebkitTextFillColor: 'transparent' }} gutterBottom>
           SIGN UP
