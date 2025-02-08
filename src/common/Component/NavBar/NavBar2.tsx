@@ -56,7 +56,7 @@ const NavBar2 = () => {
     { label: 'Order', path: '/home/finance/order' },
     { label: 'Finance', path: '/home/finance/finances' },
     { label: 'Report', path: '/home/finance/reports' },
-    { label: 'Issue', path: '/home/finance/issue' },
+    // { label: 'Issue', path: '/home/finance/issue' },
     { label: 'Logout', path: '/', action: signOut },
   ];
 

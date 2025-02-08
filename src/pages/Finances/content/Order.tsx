@@ -18,6 +18,7 @@ interface OrderData {
   startDate: string;
   endDate: string;
   paymentMethod: string;
+  createdDatetime: string;
   user: {
     id: number;
     firstName: string;
@@ -53,12 +54,20 @@ const calculateTotalPrice = (order: OrderData): number => {
   return numberOfDays * pricePerDay;
 };
 
+const isDateInRange = (date: string, startDate: string, endDate: string): boolean => {
+  const orderDate = new Date(date);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return orderDate >= start && orderDate <= end;
+};
+
 const OrderDetailsDialog = ({ order, open, onClose }: OrderDetailsDialogProps) => {
   if (!order) return null;
 
   const numberOfDays = calculateDaysBetween(order.startDate, order.endDate);
   const pricePerDay = parseInt(order.item.price.replace(/[^0-9]/g, ''));
   const totalPrice = numberOfDays * pricePerDay;
+
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -70,6 +79,7 @@ const OrderDetailsDialog = ({ order, open, onClose }: OrderDetailsDialogProps) =
             <Typography>Order ID: {order.id}</Typography>
             <Typography>Status: {order.status}</Typography>
             <Typography>Payment Method: {order.paymentMethod}</Typography>
+            <Typography>Order Date: {order.createdDatetime}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" fontWeight="bold">Customer Information</Typography>
@@ -82,12 +92,12 @@ const OrderDetailsDialog = ({ order, open, onClose }: OrderDetailsDialogProps) =
                 <Grid item xs={12} md={6}>
                   <Typography>Start Date: {new Date(order.startDate).toLocaleDateString()}</Typography>
                   <Typography>End Date: {new Date(order.endDate).toLocaleDateString()}</Typography>
-                  <Typography>Total Days: {numberOfDays} days</Typography>
+                  <Typography>Total Days: {calculateDaysBetween(order.startDate, order.endDate)} days</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography>Price per Day: Rs. {pricePerDay}</Typography>
+                  <Typography>Price per Day: Rs. {parseInt(order.item.price.replace(/[^0-9]/g, ''))}</Typography>
                   <Typography fontWeight="bold" color="primary">
-                    Total Cost: Rs. {totalPrice}
+                    Total Cost: Rs. {calculateTotalPrice(order)}
                   </Typography>
                 </Grid>
               </Grid>
@@ -119,23 +129,17 @@ const OrderDetailsDialog = ({ order, open, onClose }: OrderDetailsDialogProps) =
 const Order = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [searchCity, setSearchCity] = useState('');
   const [dateRange, setDateRange] = useState('today');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
   const [status, setStatus] = useState('');
-  const [orderType, setOrderType] = useState('');
-  const [searchTracking, setSearchTracking] = useState('');
-  const [searchCustomer, setSearchCustomer] = useState('');
-  const [searchDesignation, setSearchDesignation] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const statuses = ['','Pending', 'Processing', 'Completed', 'Cancelled'];
+  const statuses = ['', 'processing', 'completed', 'cancelled'];
   const orderTypes = ['','Delivery', 'Exchange', 'Return'];
 
   const dispatch = useDispatch();
@@ -143,11 +147,52 @@ const Order = () => {
 
   useEffect(() => {
     dispatch(AllfetchOrders() as any);
+    // handleDateRangeChange('today');
   }, [dispatch]);
 
+  const handleDateRangeChange = (range: string) => {
+    setDateRange(range);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    switch (range) {
+      case 'today':
+        setStartDate(now.toISOString().split('T')[0]);
+        setEndDate(now.toISOString().split('T')[0]);
+        break;
+      case 'yesterday':
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        setStartDate(yesterday.toISOString().split('T')[0]);
+        setEndDate(yesterday.toISOString().split('T')[0]);
+        break;
+      case 'last 7 days':
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        setStartDate(sevenDaysAgo.toISOString().split('T')[0]);
+        setEndDate(now.toISOString().split('T')[0]);
+        break;
+      case 'custom':
+        break;
+      default:
+        setStartDate('');
+        setEndDate('');
+    }
+  };
+
   const filteredData = orders?.filter((order: OrderData) => {
+    const orderDate = new Date(order.createdDatetime);
+    orderDate.setHours(0, 0, 0, 0);
+
     const matchesStatus = status === '' || order.status === status;
-    return matchesStatus;
+    const matchesOrderNumber = orderNumber === '' || order.id.toString().includes(orderNumber);
+    
+    let matchesDate = true;
+    if (startDate && endDate) {
+      matchesDate = isDateInRange(order.createdDatetime, startDate, endDate);
+    }
+
+    return matchesStatus && matchesOrderNumber && matchesDate;
   });
 
   const handleViewOrder = (order: OrderData) => {
@@ -182,7 +227,7 @@ const Order = () => {
                 <Button
                   key={option}
                   variant={dateRange === option.toLowerCase() ? "contained" : "outlined"}
-                  onClick={() => setDateRange(option.toLowerCase())}
+                  onClick={() => handleDateRangeChange(option.toLowerCase())}
                   size="small"
                 >
                   {option}
@@ -348,6 +393,9 @@ const Order = () => {
                   <Typography variant="subtitle2">Payment Method</Typography>
                 </TableCell>
                 <TableCell>
+                  <Typography variant="subtitle2">Order Date</Typography>
+                </TableCell>
+                <TableCell>
                   <Typography variant="subtitle2">Start Date</Typography>
                 </TableCell>
                 <TableCell>
@@ -377,6 +425,7 @@ const Order = () => {
                   <TableCell>{order.item.name}</TableCell>
                   <TableCell>{order.status}</TableCell>
                   <TableCell>{order.paymentMethod}</TableCell>
+                  <TableCell>{order.createdDatetime}</TableCell>
                   <TableCell>{order.startDate}</TableCell>
                   <TableCell>{order.endDate}</TableCell>
                   <TableCell>{order.item.price}</TableCell>

@@ -6,9 +6,11 @@ import Event from './Event/Event';
 import PostSetting from './PostSetting/PostSetting';
 import CategorySetting from './CategorySetting/CategorySetting';
 import AccountSetting from './AccountSetting/AccountSetting';
-import AddRole from './AddRole/AddRole';
+
 import SideBar from './SideBar/SideBar';
 import CarAvai from './CarAvai/CarAvai'
+import RoleAdmin from './AddRole/role';
+
 
 const AdminPage: React.FC = () => {
   const [selectedContent, setSelectedContent] = useState<string>('Event');
@@ -29,7 +31,7 @@ const AdminPage: React.FC = () => {
       case 'Account Setting':
         return <AccountSetting />;
       case 'Add Role':
-        return <AddRole />;
+        return <RoleAdmin />;
         case 'Availability':
         return <CarAvai />;
       default:

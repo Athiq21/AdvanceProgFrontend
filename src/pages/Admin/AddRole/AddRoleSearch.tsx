@@ -22,7 +22,7 @@ const AddRoleSearch =() => {
     useEffect(() => {
       const fetchUsers = async () => {
         try {
-          const response = await apiConfig.get('/roles/users/users'); 
+          const response = await apiConfig.get('/permissions/role/3'); 
           setUsers(response.data);
         } catch (error) {
           console.error('Error fetching users:', error);

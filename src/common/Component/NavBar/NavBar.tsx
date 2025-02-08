@@ -52,7 +52,11 @@ const NavBar: React.FC = () => {
   const navData = [
     { label: 'Category', path: '/home/markets' },
     { label: 'Event', path: '/home/event' },
-    { label: 'Finance', path: '/home/finance' },
+    // { label: 'Finance', path: '/home/finance' },
+    ...(userRole === 'ROLE_ADMIN' ? [ { label: 'Finance', path: '/home/finance' }] : []),
+        // ... ( userRole?.includes('ROLE_FINANCE')
+    //   ? [{ label: 'Finance', path: '/home/finance' }]
+    //   : []),
     ...(userRole === 'ROLE_ADMIN' ? [{ label: 'Admin', path: '/home/admin' }] : []),
   ];
 
@@ -111,10 +115,10 @@ const NavBar: React.FC = () => {
             );
           })}
 
-     {/* Messages */}
-     <IconButton onClick={handleMessagesClick}>
+
+     {/* <IconButton onClick={handleMessagesClick}>
             <Message sx={{ color: '#646262', height: '30px', marginLeft:'10px' }} />
-          </IconButton>
+          </IconButton> */}
 
                    {/* Profile */}
                    <IconButton onClick={handleProfileClick}>

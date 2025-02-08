@@ -1,146 +1,257 @@
-
-import React, { useState, useEffect } from 'react';
-import { Box, CssBaseline, Card, CardContent, Grid, Typography } from '@mui/material';
-
+import React, { useEffect, useState } from 'react';
+import { 
+  Box, CssBaseline, Card, CardContent, Grid, Typography,
+  Select, MenuItem, FormControl, InputLabel 
+} from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import NavBar2 from '../../common/Component/NavBar/NavBar2';
+import { useDispatch, useSelector } from 'react-redux';
+import { AllfetchOrders } from '../../store/features/orderSlice';
 
-
-const sampleProductStats = [
-  { name: 'Product A', stock: 120, sold: 450 },
-  { name: 'Product B', stock: 85, sold: 320 },
-  { name: 'Product C', stock: 150, sold: 500 },
-];
-
-const sampleOrderStats = [
-  { status: 'Pending', count: 30 },
-  { status: 'Completed', count: 120 },
-  { status: 'Cancelled', count: 10 },
-];
-
-const sampleOrderHistory = [
-  { date: '2023-01-01', totalOrders: 30 },
-  { date: '2023-01-02', totalOrders: 40 },
-  { date: '2023-01-03', totalOrders: 35 },
-  { date: '2023-01-04', totalOrders: 50 },
-  { date: '2023-01-05', totalOrders: 60 },
-];
-
-const sampleRevenueData = [
-  { month: 'January', revenue: 1200 },
-  { month: 'February', revenue: 1500 },
-  { month: 'March', revenue: 1300 },
-  { month: 'April', revenue: 1700 },
-];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
 const Finance: React.FC = () => {
-  const [productStats, setProductStats] = useState(sampleProductStats);
-  const [orderStats, setOrderStats] = useState(sampleOrderStats);
-  const [orderHistory, setOrderHistory] = useState(sampleOrderHistory);
-  const [revenueData, setRevenueData] = useState(sampleRevenueData);
+  const dispatch = useDispatch();
+  const orders = useSelector((state: any) => state.order.orders);
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    new Date().toISOString().slice(0, 7)
+  );
 
-  const totalSold = productStats.reduce((sum, product) => sum + product.sold, 0);
-  const totalStock = productStats.reduce((sum, product) => sum + product.stock, 0);
-  const totalOrders = orderStats.reduce((sum, order) => sum + order.count, 0);
-  const totalCompletedOrders = orderStats.find(order => order.status === 'Completed')?.count || 0;
+  useEffect(() => {
+    dispatch(AllfetchOrders() as any);
+  }, [dispatch]);
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+  // Helper function to parse the date string
+  const parseCreatedDateTime = (dateStr: string): Date => {
+    return new Date(dateStr);
+  };
+
+  // Filter orders for selected month
+  const filterOrdersByMonth = (orders: any[], yearMonth: string) => {
+    const [year, month] = yearMonth.split('-');
+    return orders?.filter((order: any) => {
+      const orderDate = parseCreatedDateTime(order.createdDatetime);
+      return orderDate.getFullYear() === parseInt(year) && 
+             orderDate.getMonth() === parseInt(month) - 1; // Month is 0-based
+    }) || [];
+  };
+
+  const currentMonthOrders = filterOrdersByMonth(orders, selectedMonth);
+
+  // Calculate order statistics for selected month
+  const orderStats = [
+    { status: 'Processing', count: currentMonthOrders.filter((order: any) => order.status === 'processing').length || 0 },
+    { status: 'Completed', count: currentMonthOrders.filter((order: any) => order.status === 'completed').length || 0 },
+    { status: 'Cancelled', count: currentMonthOrders.filter((order: any) => order.status === 'cancelled').length || 0 },
+  ];
+
+  // Calculate total revenue and create revenue data
+  const calculateTotalPrice = (order: any): number => {
+    try {
+      const start = new Date(order.startDate);
+      const end = new Date(order.endDate);
+      const diffTime = Math.abs(end.getTime() - start.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const priceStr = order.item.price.replace(/[^0-9]/g, '');
+      const pricePerDay = priceStr ? parseInt(priceStr) : 0;
+      return diffDays * pricePerDay;
+    } catch (error) {
+      console.error('Error calculating price for order:', order);
+      return 0;
+    }
+  };
+
+  // Get daily data for selected month
+  const getDaysInMonth = (yearMonth: string) => {
+    const [year, month] = yearMonth.split('-');
+    return new Date(parseInt(year), parseInt(month), 0).getDate();
+  };
+
+  const dailyOrderData = Array.from(
+    { length: getDaysInMonth(selectedMonth) },
+    (_, i) => {
+      const dayNum = i + 1;
+      const [year, month] = selectedMonth.split('-');
+      
+      return {
+        date: `${selectedMonth}-${String(dayNum).padStart(2, '0')}`,
+        totalOrders: currentMonthOrders.filter((order: any) => {
+          const orderDate = parseCreatedDateTime(order.createdDatetime);
+          return orderDate.getDate() === dayNum;
+        }).length,
+        revenue: currentMonthOrders
+          .filter((order: any) => {
+            const orderDate = parseCreatedDateTime(order.createdDatetime);
+            return orderDate.getDate() === dayNum;
+          })
+          .reduce((sum: number, order: any) => {
+            // Handle the case where price might be "gg" or similar
+            const price = order.item.price.replace(/[^0-9]/g, '');
+            if (!price) return sum; // Skip if no valid price
+            return sum + calculateTotalPrice(order);
+          }, 0)
+      };
+    }
+  );
+
+  // Calculate total statistics for selected month
+  const totalOrders = currentMonthOrders.length;
+  const totalRevenue = currentMonthOrders.reduce((sum: number, order: any) => 
+    sum + calculateTotalPrice(order), 0);
+  const averageOrderValue = totalOrders ? totalRevenue / totalOrders : 0;
+
+  // Generate last 12 months for selector
+  const getLast12Months = () => {
+    const months = [];
+    for (let i = 0; i < 12; i++) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthYear = date.toISOString().slice(0, 7);
+      const label = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+      months.push({ value: monthYear, label });
+    }
+    return months;
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <NavBar2 /> {/* Ensure Navbar is included */}
+      <NavBar2 />
 
-      {/* Main Content Box */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: '100px', // Adjust for sidebar width
+          marginLeft: '100px',
           padding: 3,
-          maxWidth: '1200px', // Limit width for better centering
+          maxWidth: '1200px',
           ml: 'auto',
           mr: 'auto',
         }}
       >
-        <Box sx={{ height: 64 }} /> {/* Spacer for AppBar */}
-        <Grid container spacing={3}>
-          {/* Products Stats Card */}
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Products Overview
-                </Typography>
-                <Typography variant="body1">Total Products: {productStats.length}</Typography>
-                <Typography variant="body1">Total Stock: {totalStock} units</Typography>
-                <Typography variant="body1">Total Sold: {totalSold} units</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+        <Box sx={{ height: 64 }} />
+        
+        {/* Month Selector */}
+        <Box sx={{ mb: 3, backgroundColor: 'white', p: 2, borderRadius: 1 }}>
+          <FormControl fullWidth>
+            <InputLabel>Select Month</InputLabel>
+            <Select
+              value={selectedMonth}
+              label="Select Month"
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            >
+              {getLast12Months().map((month) => (
+                <MenuItem key={month.value} value={month.value}>
+                  {month.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
 
-          {/* Orders Stats Card */}
+        <Grid container spacing={3}>
+          {/* Summary Stats */}
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Orders Overview
+                  Monthly Overview
                 </Typography>
                 <Typography variant="body1">Total Orders: {totalOrders}</Typography>
-                <Typography variant="body1">Completed Orders: {totalCompletedOrders}</Typography>
-                <Typography variant="body1">Pending Orders: {orderStats.find(order => order.status === 'Pending')?.count || 0}</Typography>
-                <Typography variant="body1">Cancelled Orders: {orderStats.find(order => order.status === 'Cancelled')?.count || 0}</Typography>
+                <Typography variant="body1">Total Revenue: Rs. {totalRevenue.toLocaleString()}</Typography>
+                <Typography variant="body1">Average Order Value: Rs. {averageOrderValue.toFixed(2)}</Typography>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Order Trend Chart */}
+          {/* Order Status Breakdown */}
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Order Trends
+                  Order Status
+                </Typography>
+                <Typography variant="body1">Processing: {orderStats[0].count}</Typography>
+                <Typography variant="body1">Completed: {orderStats[1].count}</Typography>
+                <Typography variant="body1">Cancelled: {orderStats[2].count}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Recent Activity */}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Recent Activity
+                </Typography>
+                {currentMonthOrders?.slice(0, 5).map((order: any) => (
+                  <Typography key={order.id} variant="body2" sx={{ mb: 1 }}>
+                    Order #{order.id} - {order.status} - Rs. {calculateTotalPrice(order)}
+                  </Typography>
+                ))}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Daily Orders Chart */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Daily Orders
                 </Typography>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={orderHistory}>
+                  <LineChart data={dailyOrderData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} // Show only day
+                    />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip 
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
                     <Legend />
-                    <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" />
+                    <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" name="Orders" />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Revenue Trend Chart */}
-          <Grid item xs={12} md={4}>
+          {/* Daily Revenue Chart */}
+          <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Revenue Trend
+                  Daily Revenue
                 </Typography>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={revenueData}>
+                  <LineChart data={dailyOrderData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} // Show only day
+                    />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip 
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
                     <Legend />
-                    <Line type="monotone" dataKey="revenue" stroke="#82ca9d" />
+                    <Line type="monotone" dataKey="revenue" stroke="#82ca9d" name="Revenue" />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
           </Grid>
-          
-          <Grid item xs={12} md={4}>
+
+          {/* Order Status Pie Chart */}
+          <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Orders Status Breakdown
+                  Monthly Status Distribution
                 </Typography>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>

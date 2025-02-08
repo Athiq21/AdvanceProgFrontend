@@ -164,36 +164,6 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      {/* <div className="hero-section">
-        <div className="gradient-bg"></div>
-        <div className="radial-gradient-bg"></div>
-        <div className="grid-overlay"></div>
-        
- 
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-        <div className="orb orb-3"></div>
-        
-  
-        <div className="light-beam beam-1"></div>
-        <div className="light-beam beam-2"></div>
-        <div className="light-beam beam-3"></div>
-        <div className="light-beam beam-4"></div>
-        
-
-        <div className="ripple ripple-1"></div>
-        <div className="ripple ripple-2"></div>
-        <div className="ripple ripple-3"></div>
-        
-
-        <div className="particles">
-          <div className="particle" style={{"--tx": "100px", "--ty": "-150px"} as React.CSSProperties}></div>
-          <div className="particle" style={{"--tx": "-120px", "--ty": "-100px"} as React.CSSProperties}></div>
-          <div className="particle" style={{"--tx": "150px", "--ty": "120px"} as React.CSSProperties}></div>
-          <div className="particle" style={{"--tx": "-100px", "--ty": "150px"} as React.CSSProperties}></div>
-          <div className="particle" style={{"--tx": "120px", "--ty": "-100px"} as React.CSSProperties}></div>
-        </div>
-      </div> */}
       
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <AuthProvider>

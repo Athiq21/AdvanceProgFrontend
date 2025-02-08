@@ -31,7 +31,7 @@ const AddRole = () => {
     }, [dispatch]);
 
     return (
-        <Box marginTop={"160px"}  marginLeft={"-50px"}>
+        <Box marginTop={"0px"}  marginLeft={"-50px"}>
             <Typography marginLeft={"30px"}>Admin Users</Typography>
             <Container>
                 <Paper sx={{ padding: '20px', marginTop: '20px' }}>
