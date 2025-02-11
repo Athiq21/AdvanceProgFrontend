@@ -131,16 +131,7 @@ const MainCard: React.FC<MainCardProps> = ({
 />
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1 }}>
-          {showForwardButton && (
-            <AddButtons
-              variant="contained"
-              sx={{ width: '60px' }}
-              onClick={onForwardButtonClick}
-              text="Sold"
-            >
-              Sold
-            </AddButtons>
-          )}
+      
           <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
             <IconButton aria-label="Add to favorites" onClick={handleSave} sx={{ marginTop: '5px' }}>
               {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}

@@ -4,6 +4,11 @@ import { Dialog, DialogContent, Box, Typography, Avatar, Button, CardMedia, Text
 import AddButton from '../../Button/Add/AddButtons';
 import { AppDispatch, RootState} from '../../../../store/index';
 import { createOrder } from '../../../../store/features/orderSlice';
+import { styled } from '@mui/material/styles';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import SpeedIcon from '@mui/icons-material/Speed';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 
 interface DescriptionCardProps {
@@ -23,6 +28,26 @@ interface DescriptionCardProps {
   status: string;
   itemId: number;
 }
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    borderRadius: 16,
+    overflow: 'hidden'
+  }
+}));
+
+const FeatureBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  padding: theme.spacing(1.5),
+  backgroundColor: theme.palette.background.default,
+  borderRadius: theme.spacing(1),
+  transition: 'transform 0.2s',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+  }
+}));
 
 const DescriptionCard: React.FC<DescriptionCardProps> = ({
   open,
@@ -50,7 +75,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
  
 
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, success, error } = useSelector((state: RootState) => state.order);
+  const { loading, error } = useSelector((state: RootState) => state.order);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -90,11 +115,13 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
     console.log('Formatted End Date:', formattedEndDate); 
   
     const orderData = {
+      id: 0, // This will be assigned by the backend
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       user: { id: userId },
       item: { id: itemId },
       paymentMethod: formData.paymentMethod,
+      status: 'pending' // Initial status
     };
   
     try {
@@ -108,57 +135,154 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
   
   
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{
-      sx: {
-        borderRadius: 2,
-        width: '80%',
-        height: '80%',
-      },
-    }}>
+    <StyledDialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="md" 
+      fullWidth 
+      PaperProps={{
+        sx: {
+          width: '85%',
+          height: '85%',
+          maxHeight: '900px',
+        },
+      }}
+    >
       <DialogContent sx={{ p: 0 }}>
         <Box sx={{ display: 'flex', height: '100%' }}>
-          <Box sx={{ width: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Box sx={{ 
+            width: '50%', 
+            position: 'relative',
+            backgroundColor: 'black'
+          }}>
+           
             <CardMedia
               component="img"
               image={`${image}`}
               alt="popup image"
               sx={{ height: '100%', width: '100%', objectFit: "contain", borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }}
             />
+         <Typography
+              variant="h4"
+              sx={{
+                position: 'absolute',
+                bottom: 20,
+                left: 20,
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                fontWeight: 'bold'
+              }}
+            >
+              {price}
+            </Typography>
           </Box>
-          <Box sx={{ width: '50%', pl: 2, display: 'flex', flexDirection: 'column' }}>
-            <Box display="flex" alignItems="center" mb={2} marginTop="10px">
-              <Avatar src={userProfilePic} sx={{ mr: 1, width: 40, height: 40 }} />
-              <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{firstName}</Typography>
+
+          <Box sx={{ 
+            width: '50%', 
+            pl: 4, 
+            pr: 4, 
+            display: 'flex', 
+            flexDirection: 'column',
+            overflow: 'auto',
+            bgcolor: 'background.paper',
+          }}>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={3} mt={3}>
+              <Box display="flex" alignItems="center">
+                <Avatar src={userProfilePic} sx={{ 
+                  mr: 2, 
+                  width: 48, 
+                  height: 48,
+                  border: '2px solid',
+                  borderColor: 'primary.main'
+                }} />
+                <Box>
+                  <Typography variant="h6">{firstName}</Typography>
+                  <Typography variant="subtitle2" color="text.secondary">Vehicle Owner</Typography>
+                </Box>
+              </Box>
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 2,
+                  bgcolor: status === 'available' ? 'success.light' : 'error.light',
+                  color: status === 'available' ? 'success.dark' : 'error.dark',
+                  fontWeight: 'medium'
+                }}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Typography>
             </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{title}</Typography>
+
+            <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>{title}</Typography>
+            
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                mb: 4,
+                color: 'text.secondary',
+                lineHeight: 1.8
+              }}
+            >
+              {description}
+            </Typography>
+
+            <Typography variant="h6" sx={{ mb: 2 }}>Vehicle Specifications</Typography>
+            
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(2, 1fr)', 
+              gap: 2,
+              mb: 4
+            }}>
+              <FeatureBox>
+                <LocalGasStationIcon color="primary" />
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">Fuel Type</Typography>
+                  <Typography variant="body1" fontWeight="medium">{fueltype}</Typography>
+                </Box>
+              </FeatureBox>
+              
+              <FeatureBox>
+                <DirectionsCarIcon color="primary" />
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">Transmission</Typography>
+                  <Typography variant="body1" fontWeight="medium">{transmission}</Typography>
+                </Box>
+              </FeatureBox>
+
+              <FeatureBox>
+                <ColorLensIcon color="primary" />
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">Color</Typography>
+                  <Typography variant="body1" fontWeight="medium">{color}</Typography>
+                </Box>
+              </FeatureBox>
+
+              <FeatureBox>
+                <SpeedIcon color="primary" />
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">Mileage</Typography>
+                  <Typography variant="body1" fontWeight="medium">{mileage}</Typography>
+                </Box>
+              </FeatureBox>
             </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{description}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{fueltype}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{transmission}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{color}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{mileage}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography> {price}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            <Typography>{status}</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" marginTop="10px">
-            </Box>
+
+            {/* Booking section */}
             {status === 'available' && !isBookingFormVisible && (
-              <Box sx={{ mt: 3 }}>
-                <AddButton variant="contained" onClick={handleBookButtonClick}>
+              <Box sx={{ mt: 2 }}>
+                
+                  <AddButton 
+                  variant="contained" 
+                  onClick={handleBookButtonClick}
+                  sx={{
+                    width: '100%',
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold'
+                  }}
+                  >
                   Book
                 </AddButton>
               </Box>
@@ -190,10 +314,9 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
   onChange={handleInputChange}
   InputLabelProps={{ shrink: true }}
   InputProps={{
-    inputProps: { min: formData.startDate || new Date().toISOString().split('T')[0] },  // Min date set to startDate
+    inputProps: { min: formData.startDate || new Date().toISOString().split('T')[0] }, 
   }}
 />
-
                 <FormControl>
                   <FormLabel>Payment Method</FormLabel>
                   <RadioGroup
@@ -205,28 +328,29 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
                     <FormControlLabel value="online" control={<Radio />} label="Pay Online" />
                   </RadioGroup>
                 </FormControl>
-                <Button
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <AddButton
                   variant="contained"
                   onClick={handleBookingSubmit}
                   disabled={loading}
-                  sx={{ mt: 2 }}
+                  sx={{ mt: 2,height: '50px' }}
                 >
                   {loading ? 'Submitting...' : 'Confirm Booking'}
-                </Button>
+                </AddButton>
+                </Box>
                 {error && <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>}
               </Box>
             )}
 
-            {isBookingConfirmed && success && (
+            {isBookingConfirmed && (
               <Typography sx={{ mt: 3 }}>Thank you for booking! Your order is confirmed.</Typography>
             )}
           </Box>
         </Box>
       </DialogContent>
-    </Dialog>
+    </StyledDialog>
   );
 };
 
 export default DescriptionCard;
-
-
+            

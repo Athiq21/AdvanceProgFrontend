@@ -5,7 +5,7 @@ interface AuthContextType {
   login: () => void;
   logout: () => void;
 }
-
+//response dto for category
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
