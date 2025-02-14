@@ -93,13 +93,12 @@ export const fetchUsers = createAsyncThunk<User[], void, { rejectValue: string }
   }
 );
 
-export const deactivateUser = createAsyncThunk<void, number, { rejectValue: string }>(
-  'users/deactivateUser',
-  async (userId, { rejectWithValue }) => {
+export const deactivateUser = createAsyncThunk(
+  'user/deactivate',
+  async (userId: number, { rejectWithValue }) => {
     try {
-      await apiConfig.put(`/users/deactivate`, null, {
-        params: { id: userId }
-      });
+      await apiConfig.post(`/users/deactivate/${userId}`);
+      return userId;
     } catch (error) {
       return rejectWithValue('Failed to deactivate account');
     }
@@ -131,13 +130,13 @@ const userSlice = createSlice({
       .addCase(deactivateUser.pending, state => {
         state.status = 'loading';
       })
-      .addCase(deactivateUser.fulfilled, (state, action) => {
+      .addCase(deactivateUser.fulfilled, (state) => {
         state.status = 'succeeded';
-        // Optionally handle user removal from state if needed
+        state.error = null;
       })
       .addCase(deactivateUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload as string || 'Failed to deactivate account';
+        state.error = action.payload as string;
       });
   },
 });

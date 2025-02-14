@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Box, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
 import SearchComponent from '../../../common/Component/SearchBar/SearchComponent';
@@ -85,38 +83,38 @@ const handleDelete = async (id: number) => {
       </Box>
 <Container>
         <Box>
-          <Grid container spacing={2} justifyContent="center">
+          <Grid container spacing={2} justifyContent="flex-start">
             {filteredItems.map((item) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
-             <MainCard
-              key={item.id}
-              id={item.id}
-              userId={item.createdBy?.id || ''}
-              imageUrl={item.createdBy?.imageUrl || ''}
-              userName={`${item.createdBy?.firstName || ''} ${item.createdBy?.lastName || ''}`}
-              image={item.imageBlob}
-              title={item.name}
-              description={item.description}
-              mileage={item.mileage}
-              price={item.price}
-              fueltype={item.fueltype}
-              transmission={item.transmission}
-              seatingCapacity={item.seatingCapacity}
-              luggageCapacity={item.luggageCapacity}
-              color={item.color}
-              yearOfManufacture={item.yearOfManufacture}
-              engineCapacity={item.engineCapacity}
-              fuelEfficiency={item.fuelEfficiency}
-              deposit={item.deposit}
-              status={item.status}
-              licensePlate={item.licensePlate}
-              blob={item.imageBlob}
-              showMoreIcon={true}
-              onEdit={() => handleEdit(item.id)}
-              onDelete={() => handleClickOpenDialog(item.id)}
-              onSave={() => { /* Implement save functionality */ }}
-              onForward={() => { /* Implement forward functionality */ }}
-            />
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <MainCard
+                  key={item.id}
+                  id={item.id}
+                  userId={item.createdBy?.id || ''}
+                  imageUrl={item.createdBy?.imageUrl || ''}
+                  userName={`${item.createdBy?.firstName || ''} ${item.createdBy?.lastName || ''}`}
+                  image={item.imageBlob}
+                  title={item.name}
+                  description={item.description}
+                  mileage={item.mileage}
+                  price={item.price}
+                  fueltype={item.fueltype}
+                  transmission={item.transmission}
+                  seatingCapacity={item.seatingCapacity}
+                  luggageCapacity={item.luggageCapacity}
+                  color={item.color}
+                  yearOfManufacture={item.yearOfManufacture}
+                  engineCapacity={item.engineCapacity}
+                  fuelEfficiency={item.fuelEfficiency}
+                  deposit={item.deposit}
+                  status={item.status}
+                  licensePlate={item.licensePlate}
+                  blob={item.imageBlob}
+                  showMoreIcon={true}
+                  onEdit={() => handleEdit(item.id)}
+                  onDelete={() => handleClickOpenDialog(item.id)}
+                  onSave={() => { /* Implement save functionality */ }}
+                  onForward={() => { /* Implement forward functionality */ }}
+                />
               </Grid>
             ))}
           </Grid>

@@ -29,11 +29,10 @@ import profileReducer from './features/profileSlice';
 import orderReducer from './features/orderSlice'
 // import authReducer from './features/authSlice'
 
-export const index = configureStore({
+export const store = configureStore({
   reducer: {
-
     theme: themeReducer,
-    users: userReducer,
+    user: userReducer,
     order: orderReducer,
     // auth:authReducer,
     // posts: postsReducer,
@@ -47,11 +46,10 @@ export const index = configureStore({
     items:itemReducer,
     admin:adminReducer,
     profile: profileReducer,
-
   },
 });
 
-export type RootState = ReturnType<typeof index.getState>;
-export type AppDispatch = typeof index.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
-export default index;
+export default store;

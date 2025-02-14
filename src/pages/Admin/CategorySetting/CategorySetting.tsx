@@ -33,8 +33,7 @@ const [value, setValue] = useState(0);
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      marginTop: { xs: '70px', sm: '170px' },
-      marginLeft: { xs: '16px', sm: '40px' },
+      marginTop: { xs: '70px', sm: '100px' },
       marginRight: { xs: '16px', sm: 0 },
     }}
   >

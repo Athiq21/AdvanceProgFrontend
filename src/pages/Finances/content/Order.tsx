@@ -288,23 +288,7 @@ const Order = () => {
       </Container>
       <Container maxWidth="lg" style={{ backgroundColor: '#e9ecef', padding: '20px', marginBottom: '10px' }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
-            <Box sx={{ 
-              backgroundColor: 'white',
-              padding: 2,
-              borderRadius: 1
-            }}>
-              <Typography variant="h7" sx={{ marginBottom: 1 }}>Tracking Number</Typography>
-              <TextField
-                fullWidth
-                placeholder="Enter tracking number"
-                size="medium"
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                sx={{ marginTop: 1 }}
-              />
-            </Box>
-          </Grid>
+         
           
           <Grid item xs={12} md={4}>
             <Box sx={{ 

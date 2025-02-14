@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TextField, MenuItem, Button, Grid, Typography, Box, Divider, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
@@ -10,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { deactivateUser } from '../../../store/features/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { AppDispatch } from '../../../store';
 
 
 const primarySettingsSchema = yup.object().shape({
@@ -38,7 +38,7 @@ const AccountSetting = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
 
@@ -154,21 +154,30 @@ const AccountSetting = () => {
   const handleConfirmDeactivate = async () => {
     setOpenConfirmDialog(false);
 
-    const userId = 1; // Replace with actual user ID
-
     try {
-      await dispatch(deactivateUser(userId)).unwrap();
+      const userId = sessionStorage.getItem('userId');
+      
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+
+      await dispatch(deactivateUser(parseInt(userId))).unwrap();
+      
+      sessionStorage.clear();
+      
       setSnackbarMessage('Account deleted successfully!');
       setSnackbarSeverity('success');
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
-      navigate('/', { state: { message: 'You are about to be logged out' } });
+      setSnackbarOpen(true);
+      
+      setTimeout(() => {
+        navigate('/', { state: { message: 'You have been logged out' } });
+      }, 1500);
+
     } catch (error) {
       setSnackbarMessage('Error deactivating account. Please try again.');
       setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
-
-    setSnackbarOpen(true);
   };
 
   const handleCancelDeactivate = () => {
@@ -304,7 +313,7 @@ const AccountSetting = () => {
         <Divider sx={{ my: 2 }} />
         
         <Box display="flex" justifyContent="space-between">
-          <Typography sx={{ fontSize: '16px', color: '#0F212E' }}>Advanced Settings</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#b81c00' }}>Danger Zone</Typography>
           <Button 
             onClick={handleDeactivateAccount}
             variant="contained"
@@ -315,7 +324,7 @@ const AccountSetting = () => {
                 backgroundColor: '#660000' 
               } 
             }}>
-            Delete Account
+            Deactivate Account
           </Button>
         </Box>
       </Box>
@@ -336,9 +345,9 @@ const AccountSetting = () => {
         open={openConfirmDialog}
         onClose={handleCancelDeactivate}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Confirm Deactivation</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete your account? This action cannot be undone.</Typography>
+          <Typography>Are you sure you want to deactivate your account? This action cannot be undone.</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelDeactivate}>No</Button>

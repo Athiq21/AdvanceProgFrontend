@@ -51,26 +51,25 @@ const Event = () => {
 
   const tabs = [
     {
-      label: 'Post Event',
+      label: 'Post NewsLetter',
       content: <PostEvent />,
     },
     {
-      label: 'Edit Event',
+      label: 'Edit NewsLetter',
       content: <EditEvent />,
     },
   ];
 
   return (
     <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        marginTop: { xs: '70px', sm: '170px' },
-        marginLeft: { xs: '16px', sm: '40px' },
-        marginRight: { xs: '16px', sm: 0 },
-      }}
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column',
+      marginTop: { xs: '70px', sm: '100px' },
+      marginRight: { xs: '16px', sm: 0 },
+    }}
     >
       <TabComponent tabs={tabs} value={value} onChange={handleChange} />
     </Box>

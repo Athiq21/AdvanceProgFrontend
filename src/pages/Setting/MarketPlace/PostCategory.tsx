@@ -5,7 +5,6 @@ import {
     Grid,
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchOrdersByUser } from "../../../store/features/orderSlice"; 
 import MainCard from "../../../common/Component/Cards/TravelCards/MainCard";
 import SearchComponent from "../../../common/Component/SearchBar/SearchComponent";
 import { RootState } from "../../../store/index";
@@ -27,19 +26,6 @@ const PostCategory = () => {
         setSearchQuery(event.target.value);
     };
 
-    // const filteredOrders = orders.filter((order) => {
-    //     const statusLower = order.status ? order.status.toLowerCase() : '';
-    //     const fullName = order.user.firstName && order.user.lastName
-    //         ? `${order.user.firstName} ${order.user.lastName}`.toLowerCase()
-    //         : '';
-    //     const searchLowerCase = searchQuery.toLowerCase();
-
-    //     return (
-    //         statusLower.includes(searchLowerCase) ||
-    //         fullName.includes(searchLowerCase) ||
-    //         (order.paymentMethod && order.paymentMethod.toLowerCase().includes(searchLowerCase))
-    //     );
-    // });
     const filteredOrders = orders.filter((order) => {
         const statusLower = order.status ? order.status.toLowerCase() : '';
     

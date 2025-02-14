@@ -1,17 +1,11 @@
 import { useState } from "react";
 import TabComponent from "../../../common/Component/Tabs/TabComponent";
 import { Box } from "@mui/material";
-// import { PhotoCamera } from "@mui/icons-material";
-// import Buttons from "../../../common/Component/Button/Buttons";
 import EditCategory from "./EditCategory";
-// import EditPost from "./EditPost";
-// import { Post } from "../../../type/Posts";
-// import usePosts from "../../../Service/CustomHook/getPost";
 
 
 
-const PostSetting = ()=>{
-  // const [posts, setPosts] = useState<Post[]>([]); 
+const PostSetting = ()=>{ 
 
 const [value, setValue] = useState(0);
 
@@ -36,8 +30,7 @@ const [value, setValue] = useState(0);
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      marginTop: { xs: '70px', sm: '170px' },
-      marginLeft: { xs: '16px', sm: '40px' },
+      marginTop: { xs: '70px', sm: '100px' },
       marginRight: { xs: '16px', sm: 0 },
     }}
   >

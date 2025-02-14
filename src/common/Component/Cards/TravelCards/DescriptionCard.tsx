@@ -41,11 +41,12 @@ const FeatureBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(1),
   padding: theme.spacing(1.5),
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: '#e3f2fd',
   borderRadius: theme.spacing(1),
   transition: 'transform 0.2s',
   '&:hover': {
     transform: 'translateY(-2px)',
+    backgroundColor: '#bbdefb',
   }
 }));
 
@@ -197,7 +198,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
                 }} />
                 <Box>
                   <Typography variant="h6">{firstName}</Typography>
-                  <Typography variant="subtitle2" color="text.secondary">Vehicle Owner</Typography>
+                  <Typography variant="subtitle2" color="text.secondary">Mega Cab Admin</Typography>
                 </Box>
               </Box>
               <Typography 
@@ -239,7 +240,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
               <FeatureBox>
                 <LocalGasStationIcon color="primary" />
                 <Box>
-                  <Typography variant="subtitle2" color="text.secondary">Fuel Type</Typography>
+                  {/* <Typography variant="subtitle2" color="text.secondary">Fuel Type</Typography> */}
                   <Typography variant="body1" fontWeight="medium">{fueltype}</Typography>
                 </Box>
               </FeatureBox>
@@ -247,7 +248,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
               <FeatureBox>
                 <DirectionsCarIcon color="primary" />
                 <Box>
-                  <Typography variant="subtitle2" color="text.secondary">Transmission</Typography>
+                  {/* <Typography variant="subtitle2" color="text.secondary">Transmission</Typography> */}
                   <Typography variant="body1" fontWeight="medium">{transmission}</Typography>
                 </Box>
               </FeatureBox>
@@ -255,7 +256,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
               <FeatureBox>
                 <ColorLensIcon color="primary" />
                 <Box>
-                  <Typography variant="subtitle2" color="text.secondary">Color</Typography>
+                  {/* <Typography variant="subtitle2" color="text.secondary">Color</Typography> */}
                   <Typography variant="body1" fontWeight="medium">{color}</Typography>
                 </Box>
               </FeatureBox>
@@ -263,7 +264,7 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
               <FeatureBox>
                 <SpeedIcon color="primary" />
                 <Box>
-                  <Typography variant="subtitle2" color="text.secondary">Mileage</Typography>
+                  {/* <Typography variant="subtitle2" color="text.secondary">Mileage</Typography> */}
                   <Typography variant="body1" fontWeight="medium">{mileage}</Typography>
                 </Box>
               </FeatureBox>

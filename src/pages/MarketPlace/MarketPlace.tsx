@@ -294,11 +294,11 @@ const Marketplace: React.FC = () => {
                                         description={item.description}
                                         mileage={`Mileage: ${item.mileage}`} 
                                         price={`Per Day: ${item.price}/=`} 
-                                        fueltype={item.fueltype}
-                                        transmission={item.transmission}
+                                        fueltype={`Fuel Type: ${item.fueltype}`} 
+                                                  transmission={`Transmission: ${item.transmission}`}
                                         seatingCapacity={item.seatingCapacity}
                                         luggageCapacity={item.luggageCapacity}
-                                        color={item.color}
+                                        color={`Color: ${item.color}`}
                                         yearOfManufacture={item.yearOfManufacture}
                                         engineCapacity={item.engineCapacity}
                                         fuelEfficiency={item.fuelEfficiency}
