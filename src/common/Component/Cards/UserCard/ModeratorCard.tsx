@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
+import DeleteIcon from '@mui/icons-material/Delete';
+import BlockIcon from '@mui/icons-material/Block';
 import AddButtons from '../../Button/Add/AddButtons';
 import { useDispatch } from 'react-redux';
 import { updateUserRole } from '../../../../store/features/adminSlice';
@@ -54,7 +56,7 @@ const ReactivateIconStyled = styled(IconButton)(({ theme }) => ({
   right: theme.spacing(8),
 }));
 
-const UserCard: React.FC<UserCardProps> = ({
+const ModeratorCard: React.FC<UserCardProps> = ({
   profilePic,
   name,
   email,
@@ -78,16 +80,16 @@ const UserCard: React.FC<UserCardProps> = ({
 
   const handleButtonClick = async () => {
     try {
-      await dispatch(updateUserRole({ email, role: 'ROLE_ADMIN' }));
+      await dispatch(updateUserRole({ email, role: 'ROLE_MODERATOR' }));
       setSnackbar({
         open: true,
-        message: 'User successfully promoted to admin',
+        message: 'User successfully promoted to moderator',
         severity: 'success'
       });
     } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Failed to promote user to admin',
+        message: 'Failed to promote user to moderator',
         severity: 'error'
       });
     }
@@ -106,7 +108,7 @@ const UserCard: React.FC<UserCardProps> = ({
         </UserInfo>
         {showButton && (
           <StyledAddButtons onClick={handleButtonClick} text={''}>
-            Admin
+          Mod
           </StyledAddButtons>
         )}
         {showDeleteIcon && (
@@ -130,4 +132,4 @@ const UserCard: React.FC<UserCardProps> = ({
   );
 };
 
-export default UserCard;
+export default ModeratorCard;

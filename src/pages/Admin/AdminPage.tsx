@@ -1,6 +1,4 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 import Event from './Event/Event';
 import PostSetting from './PostSetting/PostSetting';
@@ -14,7 +12,13 @@ import RoleAdmin from './AddRole/role';
 
 const AdminPage: React.FC = () => {
   const [selectedContent, setSelectedContent] = useState<string>('Event');
-  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
+  const [isSidebarVisible] = useState<boolean>(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const role = sessionStorage.getItem('roleName') || localStorage.getItem('roleName');
+    setUserRole(role);
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -29,10 +33,10 @@ const AdminPage: React.FC = () => {
       case 'Category Setting':
         return <CategorySetting />;
       case 'Account Setting':
-        return <AccountSetting />;
+        return userRole === 'ROLE_ADMIN' ? <AccountSetting /> : null;
       case 'Add Role':
-        return <RoleAdmin />;
-        case 'Availability':
+        return userRole === 'ROLE_ADMIN' ? <RoleAdmin /> : null;
+      case 'Availability':
         return <CarAvai />;
       default:
         return <Event />;

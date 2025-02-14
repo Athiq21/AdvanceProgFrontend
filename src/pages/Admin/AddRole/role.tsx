@@ -4,6 +4,7 @@ import { useState } from "react";
 import TabComponent from "../../../common/Component/Tabs/TabComponent";
 import { Box } from "@mui/material";
 import AddRole from "./AddRole";
+import AddPermission from "./AddPermission";
 
 
 const RoleAdmin = () => {
@@ -20,7 +21,7 @@ const RoleAdmin = () => {
     },
     {
       label: 'Permission',
-    //   content: <EditEvent />,
+      content: <AddPermission />,
     },
   ];
 

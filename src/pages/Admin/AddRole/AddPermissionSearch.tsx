@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import SearchComponent from '../../../common/Component/SearchBar/SearchComponent';
 import {useEffect, useState } from 'react';
-import UserCard from '../../../common/Component/Cards/UserCard/UserCard';
+import ModeratorCard from '../../../common/Component/Cards/UserCard/ModeratorCard';
 import apiConfig from '../../../Authentication/api';
 
 interface Role {
@@ -21,17 +21,15 @@ interface User {
   role: Role;
 }
 
-const AddRoleSearch =() => {
+const AddPermissionSearch =() => {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState<User[]>([]);
     
     useEffect(() => {
       const fetchUsers = async () => {
         try {
-          const response1 = await apiConfig.post('/permissions/role/5'); 
-          const response2 = await apiConfig.post('/permissions/role/6'); 
-          // Combine the data from both responses
-          const combinedUsers = [...response1.data, ...response2.data];
+          const response1 = await apiConfig.post('/permissions/role/6'); 
+          const combinedUsers = [...response1.data];
           setUsers(combinedUsers);
         } catch (error) {
           console.error('Error fetching users:', error);
@@ -68,7 +66,7 @@ const AddRoleSearch =() => {
 {filteredUsers.map(user => (
 
 <Box key={user.id} marginBottom={3}>
-  <UserCard
+  <ModeratorCard
     profilePic={user.imageUrl}
     name={`${user.firstName} ${user.lastName}`}
     email={user.email}
@@ -87,4 +85,4 @@ const AddRoleSearch =() => {
         </>
     );
 }
-export default AddRoleSearch;
+export default AddPermissionSearch;

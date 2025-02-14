@@ -1,6 +1,3 @@
-
-
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiConfig from '../../Authentication/api';
 
@@ -71,11 +68,24 @@ export const fetchAdminUsers = createAsyncThunk(
   'admin/fetchAdminUsers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiConfig.get<User[]>('/permissions/role/1'); 
+      const response = await apiConfig.post<User[]>('/permissions/role/4'); 
       return response.data;
     } catch (error) {
       console.error('Error fetching admin users:', error);
       return rejectWithValue('Failed to fetch admin users');
+    }
+  }
+);
+
+export const fetchmoderatorUsers = createAsyncThunk(
+  'admin/fetchmoderatorUsers',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiConfig.post<User[]>('/permissions/role/5'); 
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching moderator users:', error);
+      return rejectWithValue('Failed to fetch moderator users');
     }
   }
 );
@@ -106,7 +116,21 @@ export const deactivateUser = createAsyncThunk(
     }
   );
 
-
+export const updateUserRole = createAsyncThunk(
+  'admin/updateUserRole',
+  async (data: { email: string, role: string }, { rejectWithValue }) => {
+    try {
+      const response = await apiConfig.post('/permissions/update', {
+        email: data.email,
+        role: data.role
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      return rejectWithValue('Failed to update user role');
+    }
+  }
+);
 
   ///FOR ROLE ADDINGS ONLY 
 
@@ -139,28 +163,7 @@ const adminSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload as string || 'Failed to promote user to admin';
       })
-      .addCase(fetchAdminUsers.pending, state => {
-        state.status = 'loading';
-      })
-      .addCase(fetchAdminUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.users = action.payload; // Store the list of admin users
-      })
-      .addCase(fetchAdminUsers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload as string || 'Failed to fetch admin users';
-      })
-      .addCase(fetchUsers.pending, state => {
-        state.status = 'loading';
-      })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.users = action.payload; // Store the list of regular users
-      })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload as string || 'Failed to fetch users';
-      })
+      
       .addCase(deactivateUser.pending, state => {
         state.status = 'loading';
       })
@@ -184,6 +187,51 @@ const adminSlice = createSlice({
       })
 
       //role
+      .addCase(fetchmoderatorUsers.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(fetchmoderatorUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.users = action.payload;
+      })
+      .addCase(fetchmoderatorUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string || 'Failed to fetch moderator users';
+      })
+
+      .addCase(fetchAdminUsers.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAdminUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.users = action.payload; // Store the list of admin users
+      })
+      .addCase(fetchAdminUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string || 'Failed to fetch admin users';
+      })
+      
+      .addCase(fetchUsers.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.users = action.payload; // Store the list of regular users
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string || 'Failed to fetch users';
+      })
+      .addCase(updateUserRole.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserRole.fulfilled, (state) => {
+        state.status = 'succeeded';
+      })
+      .addCase(updateUserRole.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string || 'Failed to update user role';
+      });
   },
 });
 

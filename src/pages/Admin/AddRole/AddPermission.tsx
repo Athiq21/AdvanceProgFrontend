@@ -2,23 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { Box, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Dialog, DialogTitle, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../store';
-import { fetchAdminUsers, demoteUserToUser, updateUserRole } from '../../../store/features/adminSlice';
-import AddRoleSearch from './AddRoleSearch';
+import { fetchmoderatorUsers, demoteUserToUser, updateUserRole } from '../../../store/features/adminSlice';
+import AddPermissionSearch from './AddPermissionSearch';
 import AddButtons from '../../../common/Component/Button/Add/AddButtons';
 import SnackbarAlert from '../../../common/Component/Snackbar/SnackbarAlert';
 
-// interface User {
-//   id: number;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   role: {
-//     id: number;
-//     authority: string;
-//   };
-// }
+interface User {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  imageUrl: string;
+  department: string;
+  designation: string;
+  role: {
+    id: number;
+    authority: string;
+    created_datetime: string | null;
+  };
+}
 
-const AddRole = () => {
+const AddPermission = () => {
     const dispatch: AppDispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [snackbar, setSnackbar] = useState({
@@ -50,7 +54,7 @@ const AddRole = () => {
                 message: 'User successfully demoted to regular user',
                 severity: 'success'
             });
-            dispatch(fetchAdminUsers()); // Refresh the list
+            dispatch(fetchmoderatorUsers()); // Refresh the list
         } catch (error) {
             setSnackbar({
                 open: true,
@@ -60,13 +64,14 @@ const AddRole = () => {
         }
     };
 
+    // Fetch admin users on mount
     useEffect(() => {
-        dispatch(fetchAdminUsers());
+        dispatch(fetchmoderatorUsers());
     }, [dispatch]);
 
     return (
         <Box marginTop={"0px"}  marginLeft={"-50px"}>
-            <Typography marginLeft={"30px"}>Admin Users</Typography>
+            <Typography marginLeft={"30px"}>Moderator Users</Typography>
             <Container>
                 <Paper sx={{ padding: '20px', marginTop: '20px' }}>
                     <TableContainer component={Paper} sx={{ marginTop: '20px' }}>
@@ -95,9 +100,9 @@ const AddRole = () => {
                                                 color="primary"
                                                 height="40px"
                                                 onClick={() => handleDemoteUser(user.email)}
-                                                text="Demote to User"
+                                                text="Revoke Permission"
                                             >
-                                                Demote to User
+                                                Revoke Permission
                                             </AddButtons>
                                         </TableCell>
                                     </TableRow>
@@ -108,8 +113,14 @@ const AddRole = () => {
                 </Paper>
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                    <AddButtons variant="contained" color="primary" height="40px" onClick={handleClickOpen}>
-                        Add Admin
+                    <AddButtons 
+                        variant="contained" 
+                        color="primary" 
+                        height="40px" 
+                        onClick={handleClickOpen}
+                        text="Grant Permission"
+                    >
+                        Grant Permission
                     </AddButtons>
                 </Box>
             </Container>
@@ -124,8 +135,8 @@ const AddRole = () => {
                         borderRadius: '10px'
                     },
                 }}>
-                <DialogTitle>Add Role</DialogTitle>
-                <AddRoleSearch />
+                <DialogTitle>Permissions</DialogTitle>
+                <AddPermissionSearch />
             </Dialog>
 
             <SnackbarAlert
@@ -138,4 +149,4 @@ const AddRole = () => {
     );
 }
 
-export default AddRole;
+export default AddPermission;

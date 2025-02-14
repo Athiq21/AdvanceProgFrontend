@@ -1,19 +1,12 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
   IconButton,
-  Avatar,
   Box,
-  Popover,
-  Typography,
-  List,
-  ListItem,
-  Button,
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Notifications, Message } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
@@ -22,7 +15,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import AdbIcon from '@mui/icons-material/Adb';
 import AvatarComponent from '../../../pages/Setting/Avatar';
 import taxi from '/asset/taxi.png';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 const iconMap: { [key: string]: JSX.Element } = {
   category: <StorefrontOutlinedIcon />,
@@ -52,12 +45,12 @@ const NavBar: React.FC = () => {
   const navData = [
     { label: 'Category', path: '/home/markets' },
     { label: 'Event', path: '/home/event' },
-    // { label: 'Finance', path: '/home/finance' },
-    ...(userRole === 'ROLE_ADMIN' ? [ { label: 'Finance', path: '/home/finance' }] : []),
-        // ... ( userRole?.includes('ROLE_FINANCE')
-    //   ? [{ label: 'Finance', path: '/home/finance' }]
-    //   : []),
-    ...(userRole === 'ROLE_ADMIN' ? [{ label: 'Admin', path: '/home/admin' }] : []),
+    ...(userRole === 'ROLE_ADMIN' || userRole === 'ROLE_MODERATOR' 
+      ? [{ label: 'Finance', path: '/home/finance' }] 
+      : []),
+    ...(userRole === 'ROLE_ADMIN' || userRole === 'ROLE_MODERATOR' 
+      ? [{ label: 'Admin', path: '/home/admin' }] 
+      : []),
   ];
 
   const handleProfileClick = () => {
