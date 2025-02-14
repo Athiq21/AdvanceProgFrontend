@@ -8,6 +8,7 @@ import EditCategoryCard from './EditCategoryCard';
 import AddButtons from '../../Button/Add/AddButtons';
 import { BASE_URL } from '../../../../Authentication/api';
 import { fetchUsersWithMessages, sendMessage } from '../../../../Service/messageService';
+import { User } from '../../../../store/types';
 
 
 const MainCard: React.FC<MainCardProps> = ({
@@ -94,50 +95,139 @@ const MainCard: React.FC<MainCardProps> = ({
   return (
     <>
       <Card
-        sx={{ display: 'flex', flexDirection: 'column', marginTop: '5px', height: '330px', width: '230px', borderRadius: '10px', '@media (max-width: 600px)': { width: '240px', height: '330px' } }}
+        elevation={2}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          marginTop: '5px',
+          height: '330px',
+          width: '230px',
+          borderRadius: '15px',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+          },
+          '@media (max-width: 600px)': {
+            width: '240px',
+            height: '330px'
+          }
+        }}
       >
         <CardHeader
-          avatar={<Avatar src={imageUrl} />}
-          title={title}
-          sx={{ cursor: 'pointer', position: 'relative' }}
+          avatar={
+            <Avatar 
+              src={imageUrl}
+              sx={{
+                width: 40,
+                height: 40,
+                border: '2px solid #fff',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            />
+          }
+          title={
+            <Typography 
+              variant="subtitle1" 
+              sx={{ 
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: '#2c3e50',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {title}
+            </Typography>
+          }
+          sx={{
+            cursor: 'pointer',
+            position: 'relative',
+            pb: 1,
+            '& .MuiCardHeader-content': {
+              overflow: 'hidden'
+            }
+          }}
           action={
-            <>
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
               {showMoreIcon && (
-                <IconButton aria-label="more" onClick={handleClickMoreVert} sx={{ position: 'absolute', right: 0, top: 16 }}>
+                <IconButton 
+                  aria-label="more" 
+                  onClick={handleClickMoreVert}
+                  sx={{ 
+                    color: '#64748b',
+                    '&:hover': {
+                      color: '#334155',
+                      backgroundColor: 'rgba(0,0,0,0.04)'
+                    }
+                  }}
+                >
                   <MoreVert />
                 </IconButton>
               )}
               {showEyeIcon && (
-                <IconButton aria-label="view-profile" onClick={handleProfilePopupOpen} sx={{ position: 'absolute', right: 40, top: 16 }}>
+                <IconButton 
+                  aria-label="view-profile" 
+                  onClick={handleProfilePopupOpen}
+                  sx={{ 
+                    color: '#64748b',
+                    '&:hover': {
+                      color: '#334155',
+                      backgroundColor: 'rgba(0,0,0,0.04)'
+                    }
+                  }}
+                >
                   <Visibility />
                 </IconButton>
               )}
-            </>
+            </Box>
           }
         />
 
-<CardMedia
-  component="img"
-  image={`${image}`}
-  alt=""
-  onClick={() => setOpen(true)}
-  sx={{ height: 200, objectFit: 'cover', borderRadius: 2 }}
-  onError={(e) => {
-    console.error("Image failed to load:");
-  }}
-  onLoad={() => {
-    console.log("Image loaded successfully:", `${image}`);
-  }}
-/>
+        <CardMedia
+          component="img"
+          image={`${image}`}
+          alt={title}
+          onClick={() => setOpen(true)}
+          sx={{
+            height: 200,
+            objectFit: 'cover',
+            cursor: 'pointer',
+            transition: 'transform 0.3s',
+            '&:hover': {
+              transform: 'scale(1.02)'
+            }
+          }}
+          onError={() => {
+            console.error("Image failed to load");
+          }}
+        />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1 }}>
-      
-          <Box sx={{ display: 'flex', marginLeft: 'auto' }}>
-            <IconButton aria-label="Add to favorites" onClick={handleSave} sx={{ marginTop: '5px' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          p: 1.5,
+          mt: 'auto'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            marginLeft: 'auto' 
+          }}>
+            <IconButton 
+              aria-label="Add to favorites" 
+              onClick={handleSave}
+              sx={{
+                color: isBookmarked ? '#e11d48' : '#64748b',
+                transition: 'transform 0.2s, color 0.2s',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  color: '#e11d48'
+                }
+              }}
+            >
               {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-            </IconButton>
-            <IconButton onClick={handleShareClick} sx={{ rotate: '-38deg' }}>
-              <Send />
             </IconButton>
           </Box>
         </Box>

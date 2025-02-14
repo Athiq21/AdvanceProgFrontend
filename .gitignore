@@ -30,3 +30,4 @@ build/
 # OS-specific files
 # Leave the .env file ignored to prevent sensitive data from being committed
 .env
+.vercel
