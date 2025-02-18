@@ -5,6 +5,9 @@ import {
   IconButton,
   Box,
   useMediaQuery,
+  Badge,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -16,6 +19,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 import AvatarComponent from '../../../pages/Setting/Avatar';
 import taxi from '/asset/taxi.png';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { useSelector, useDispatch } from 'react-redux';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { RootState, AppDispatch } from '../../../store/store';
+import { fetchNotifications, markNotificationAsRead } from '../../../store/slices/notificationSlice';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { useSnackbar } from 'notistack';
+
 
 const iconMap: { [key: string]: JSX.Element } = {
   category: <StorefrontOutlinedIcon />,
@@ -32,15 +42,46 @@ const NavBar: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [notifications, setNotifications] = useState<Array<string>>([
-    'Your Account has successfully been Activated',
-  ]);
+  const dispatch = useDispatch<AppDispatch>();
+  const notifications = useSelector((state: RootState) => 
+    state.notifications.notifications.filter(notif => 
+      notif.user.id === Number(sessionStorage.getItem('userId') || localStorage.getItem('userId'))
+    )
+  );
+  const loading = useSelector((state: RootState) => state.notifications.loading);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const [lastNotificationCount, setLastNotificationCount] = useState(0);
 
   useEffect(() => {
     const role = sessionStorage.getItem('roleName') || localStorage.getItem('roleName');
     setUserRole(role);
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      dispatch(fetchNotifications());
+    }, 30000);
+
+    return () => clearInterval(pollInterval);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (notifications.length > lastNotificationCount && lastNotificationCount !== 0) {
+      enqueueSnackbar('You have new notifications!', {
+        variant: 'info',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
+    }
+    setLastNotificationCount(notifications.length);
+  }, [notifications.length, lastNotificationCount, enqueueSnackbar]);
 
   const navData = [
     { label: 'Category', path: '/home/markets' },
@@ -57,12 +98,19 @@ const NavBar: React.FC = () => {
     navigate('/home/setting');
   };
 
-  const handleMessagesClick = () => {
-    navigate('/home/messages');
+  const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const handleNotificationClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMarkAsRead = async (notificationId: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    await dispatch(markNotificationAsRead(notificationId));
+    handleNotificationClose();
+  };
 
   return (
     <Box>
@@ -108,14 +156,75 @@ const NavBar: React.FC = () => {
             );
           })}
 
+          <IconButton onClick={handleNotificationClick}>
+            <Badge badgeContent={loading ? 0 : notifications.length} color="error">
+              <NotificationsIcon sx={{ color: '#646262', height: '30px', marginLeft: '10px' }} />
+            </Badge>
+          </IconButton>
 
-     {/* <IconButton onClick={handleMessagesClick}>
-            <Message sx={{ color: '#646262', height: '30px', marginLeft:'10px' }} />
-          </IconButton> */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleNotificationClose}
+            PaperProps={{
+              style: {
+                maxHeight: 300,
+                width: '50%',
+              },
+            }}
+          >
+            {loading ? (
+              <MenuItem>Loading notifications...</MenuItem>
+            ) : (
+              <>
+                {notifications.length > 0 ? (
+                  notifications.map((notification) => (
+                    <MenuItem 
+                      key={notification.id} 
+                      onClick={handleNotificationClose}
+                      sx={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        width: '100%',
+                        padding: '8px 16px'
+                      }}
+                    >
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        width: '100%',
+                        alignItems: 'center'
+                      }}>
+                        <div style={{ flex: 1, marginRight: '8px' }}>{notification.message}</div>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMarkAsRead(notification.id, e)}
+                          sx={{ 
+                            ml: 1,
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                            }
+                          }}
+                        >
+                          <DoneAllIcon fontSize="small" sx={{ color: '#666' }} />
+                        </IconButton>
+                      </Box>
+                      <div style={{ fontSize: '0.8em', color: '#666', marginTop: '4px' }}>
+                        {new Date(notification.createdDatetime).toLocaleString()}
+                      </div>
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem>No notifications</MenuItem>
+                )}
+              </>
+            )}
+          </Menu>
 
-                   {/* Profile */}
-                   <IconButton onClick={handleProfileClick}>
-            <AvatarComponent style={{ width: 30, height: 30 , marginLeft:'20px' }} />
+          {/* Profile */}
+          <IconButton onClick={handleProfileClick}>
+            <AvatarComponent style={{ width: 30, height: 30, marginLeft:'20px' }} />
           </IconButton>
 
         </Toolbar>

@@ -28,6 +28,7 @@ import profileReducer from './features/profileSlice'
 
 import orderReducer from './features/orderSlice'
 // import authReducer from './features/authSlice'
+import notificationReducer from './slices/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -46,6 +47,7 @@ export const store = configureStore({
     admin:adminReducer,
     profile:profileReducer,
     // events: eventReducer,
+    notifications: notificationReducer,
 
 
     

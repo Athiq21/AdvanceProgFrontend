@@ -23,6 +23,8 @@ import Order from './pages/Finances/content/Order'
 import Finances from './pages/Finances/content/Finances'
 import Reports from './pages/Finances/content/reports'
 import Issue from './pages/Finances/content/Issue/Issue'
+import { SnackbarProvider } from 'notistack'
+
 const router = createBrowserRouter([
   {
     path: '/home',
@@ -163,14 +165,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <>
-      
+    <SnackbarProvider maxSnack={3}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <AuthProvider>
           <RouterProvider router={router} />
         </AuthProvider>
       </LocalizationProvider>
-    </>
+    </SnackbarProvider>
   )
 }
 
