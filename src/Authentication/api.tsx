@@ -2,7 +2,7 @@ import axios from 'axios';
 export const BASE_URL = 'http://localhost:8080/api';
 // export const BASE_URL = 'http://147.79.68.107:8080/Vehicle/api';
 
-// export const BASE_URL = 'http://172.20.10.2:8080/api';
+// export const BASE_URL = 'http://172.20.10.3:8080/api';
 
 
 const apiConfig = axios.create({

@@ -5,8 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ProfileAvatar from '../Avatar/ProfileAvatar';
 import apiConfig from '../../../Authentication/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../store';
+import { useDispatch } from 'react-redux';
 import { deactivateUser } from '../../../store/features/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../../store';
@@ -19,7 +18,6 @@ const primarySettingsSchema = yup.object().shape({
   lastName: yup.string()
     .required('Last Name is required')
     .matches(/^[A-Za-z]{3,}$/, 'At least 3 letters, no numbers or symbols'),
-  designation: yup.string().required('Designation is required'),
 });
 
 const passwordSettingsSchema = yup.object().shape({
@@ -42,12 +40,11 @@ const AccountSetting = () => {
   const navigate = useNavigate();
 
 
-  const { control: primaryControl, handleSubmit: handlePrimarySubmit, formState: { errors: primaryErrors }, setValue, getValues } = useForm({
+  const { control: primaryControl, handleSubmit: handlePrimarySubmit, formState: { errors: primaryErrors }, setValue } = useForm({
     resolver: yupResolver(primarySettingsSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
-      designation: '',
     },
   });
 
@@ -68,18 +65,27 @@ const AccountSetting = () => {
     setValue('lastName', lastName);
   }, [dispatch, setValue]);
 
-  const onSubmitPrimarySettings = async (data: any) => {
-    const { firstName, lastName, designation } = data;
+  interface PrimarySettingsData {
+    firstName: string;
+    lastName: string;
+  }
+
+  const onSubmitPrimarySettings = async (data: PrimarySettingsData) => {
+    const { firstName, lastName } = data;
+    const userId = sessionStorage.getItem('userId');
+
+    if (!userId) {
+      setSnackbarMessage('User ID not found');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
 
     try {
-      const response = await apiConfig.put('/users/updateDetails', null, {
-        params: {
-          firstName,
-          lastName,
-          designation
-        },
+      await apiConfig.post(`/user/update/${userId}`, {
+        firstName,
+        lastName
       });
-      console.log(response.data);
 
       setSnackbarMessage('Profile updated successfully!');
       setSnackbarSeverity('success');
@@ -87,7 +93,6 @@ const AccountSetting = () => {
 
       sessionStorage.setItem('userFirstName', firstName);
       sessionStorage.setItem('userLastName', lastName);
-      sessionStorage.setItem('userDesignationId', designation);
     } catch (error) {
       setSnackbarMessage('Error updating profile. Please try again.');
       setSnackbarSeverity('error');
@@ -95,12 +100,25 @@ const AccountSetting = () => {
     }
   };
 
-  const onSubmitPasswordSettings = async (data: any) => {
+  interface PasswordSettingsData {
+    password: string;
+    confirmPassword: string;
+  }
+
+  const onSubmitPasswordSettings = async (data: PasswordSettingsData) => {
     const { password } = data;
+    const userId = sessionStorage.getItem('userId');
+
+    if (!userId) {
+      setSnackbarMessage('User ID not found');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
 
     try {
-      const response = await apiConfig.put('/users/changePassword', {
-        newPassword: password
+      await apiConfig.post(`/user/changepassword/${userId}`, {
+        password
       });
 
       setSnackbarMessage('Password changed successfully!');
@@ -158,19 +176,25 @@ const AccountSetting = () => {
       const userId = sessionStorage.getItem('userId');
       
       if (!userId) {
-        throw new Error('User ID not found');
+        setSnackbarMessage('User ID not found');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        return;
       }
 
-      await dispatch(deactivateUser(parseInt(userId))).unwrap();
+      await apiConfig.post(`/user/deactivate/${userId}`);
       
+      // Clear both sessionStorage and localStorage
       sessionStorage.clear();
+      localStorage.clear();
       
-      setSnackbarMessage('Account deleted successfully!');
+      setSnackbarMessage('Account deactivated successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       
+      // Navigate to login page after a short delay
       setTimeout(() => {
-        navigate('/', { state: { message: 'You have been logged out' } });
+        navigate('/', { state: { message: 'Account deactivated successfully' } });
       }, 1500);
 
     } catch (error) {
@@ -240,8 +264,6 @@ const AccountSetting = () => {
                 )}
               />
             </Grid>
-
-             
           </Grid>
           <Box display="flex" justifyContent="flex-end" mt={2}>
             <Button
