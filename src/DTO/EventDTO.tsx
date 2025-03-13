@@ -4,4 +4,4 @@ interface EventDTO {
     description: string;
     blob: File;
   }
-  
+  //event dto section for class
